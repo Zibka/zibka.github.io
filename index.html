@@ -259,6 +259,11 @@
             box-shadow: 0 0 0 2px #1a5fc7;
         }
 
+        .btn-select.done-main {
+            background: #27ae60;
+            color: white;
+        }
+
         .btn-assign {
             background: #e67e22;
             color: white;
@@ -704,7 +709,7 @@
         let selectedId = null;
         let assignedMain = new Set();
         let assignedExtra = new Set();
-        let assignedMainParticipants = new Set();
+        let assignedMainParticipants = new Set(); // Кто выполнил ОСНОВНУЮ задачу
         let gameOver = false;
         let winShown = false;
 
@@ -743,12 +748,25 @@
                 const ratio = (p.maxFatigue - p.fatigue) / p.maxFatigue;
                 const color = ratio > 0.6 ? '#27ae60' : ratio > 0.3 ? '#f39c12' : '#e74c3c';
                 const width = Math.max(0, ratio * 100);
-                // Блокируем только если устал или уже выполнил ОСНОВНУЮ задачу
-                const disabled = p.fatigue >= p.maxFatigue || assignedMainParticipants.has(p.id);
+                
+                // Полностью недоступен только если устал
+                const isExhausted = p.fatigue >= p.maxFatigue;
+                // Выполнил основную задачу — блокируем для основных, но НЕ для дополнительных
+                const hasMainDone = assignedMainParticipants.has(p.id);
+                // Выбран ли сейчас
                 const active = selectedId === p.id;
+                
+                // Кнопка "Выбрать" — доступна только если НЕ устал
+                const canSelect = !isExhausted;
 
                 const card = document.createElement('div');
                 card.className = 'card';
+                
+                // Статусная метка
+                let statusBadge = '';
+                if (isExhausted) statusBadge = '😴 Устал';
+                else if (hasMainDone) statusBadge = '✅ Осн. задача выполнена';
+
                 card.innerHTML = `
                     <div class="card-row">
                         <div class="avatar-box">
@@ -756,7 +774,7 @@
                                  onerror="this.style.display='none';this.parentElement.textContent='${p.emoji}';this.parentElement.style.fontSize='24px';">
                         </div>
                         <div class="card-body">
-                            <div class="card-name">${p.name}</div>
+                            <div class="card-name">${p.name} ${statusBadge ? '— ' + statusBadge : ''}</div>
                             <div class="card-desc">${p.desc}</div>
                             <div class="card-stats">
                                 <span>📋 ${p.tasksDone}</span>
@@ -769,8 +787,11 @@
                         </div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn btn-select ${active ? 'active' : ''}" ${disabled ? 'disabled' : ''}
-                                onclick="selectParticipant(${p.id})">Выбрать</button>
+                        <button class="btn btn-select ${active ? 'active' : ''} ${hasMainDone ? 'done-main' : ''}" 
+                                ${!canSelect ? 'disabled' : ''}
+                                onclick="selectParticipant(${p.id})">
+                            ${hasMainDone ? '📌 Выбрать (доп)' : 'Выбрать'}
+                        </button>
                         <button class="btn btn-info" onclick="showDetail(${p.id})">Подробнее</button>
                     </div>
                 `;
@@ -857,13 +878,14 @@
                 setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
                 return;
             }
-            // Если участник уже выполнил основную задачу — его можно выбрать только для доп. задач
-            if (assignedMainParticipants.has(p.id)) {
-                setGriffin(`ℹ️ ${p.name} уже выполнил основную задачу. Может выполнять дополнительные.`);
-            }
             selectedId = id;
             render();
-            setGriffin(`✅ Выбран ${p.name}. Выбери задачу.`);
+            const hasMain = assignedMainParticipants.has(p.id);
+            if (hasMain) {
+                setGriffin(`✅ Выбран ${p.name} (основная выполнена). Может выполнять доп. задачи.`);
+            } else {
+                setGriffin(`✅ Выбран ${p.name}. Выбери задачу.`);
+            }
         }
 
         function assignMain(taskId) {
@@ -878,6 +900,16 @@
             // Проверяем, не устал ли
             if (p.fatigue >= p.maxFatigue) {
                 setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
+                selectedId = null;
+                render();
+                return;
+            }
+
+            // Проверяем, не выполнил ли уже основную задачу
+            if (assignedMainParticipants.has(p.id)) {
+                setGriffin(`❌ ${p.name} уже выполнил основную задачу! Может только доп. задачи.`);
+                selectedId = null;
+                render();
                 return;
             }
 
@@ -886,14 +918,12 @@
                 assignedMainParticipants.add(p.id);
                 p.fatigue += 1;
                 p.tasksDone += 1;
-                // Сбрасываем выбор после ОСНОВНОЙ задачи
-                selectedId = null;
+                selectedId = null; // Сбрасываем после основной задачи
                 render();
                 setGriffin(`🎉 ${p.name} → «${t.name}»  ⚡ ${p.fatigue}/${p.maxFatigue}`);
                 checkWin();
             } else {
                 setGriffin(`❌ ${p.name} не подходит для «${t.name}»! 💡 Нужен ${t.correctRole}.`);
-                // Сбрасываем выбор после ошибки
                 selectedId = null;
                 render();
             }
@@ -908,6 +938,7 @@
             const t = getExtraTask(taskId);
             if (!p || !t) return;
 
+            // Проверяем усталость
             if (p.fatigue + t.fatigueCost > p.maxFatigue) {
                 setGriffin(`❌ ${p.name} устал! ${p.fatigue}+${t.fatigueCost} > ${p.maxFatigue}`);
                 return;
@@ -917,7 +948,7 @@
             p.fatigue += t.fatigueCost;
             p.tasksDone += 1;
             
-            // НЕ СБРАСЫВАЕМ selectedId — можно назначить несколько доп. задач!
+            // НЕ СБРАСЫВАЕМ selectedId — можно назначать несколько доп. задач!
             render();
             setGriffin(`🎉 ${p.name} → «${t.name}»  +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
             document.getElementById('statusBar').textContent = `Выбран: ${p.name}  (можно ещё доп. задачи)`;
