@@ -19,7 +19,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            padding: 30px;
+            padding: 25px;
             max-width: 1400px;
             width: 100%;
         }
@@ -27,7 +27,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
             gap: 10px;
         }
@@ -66,8 +66,8 @@
             gap: 10px;
         }
         .avatar {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
@@ -142,6 +142,7 @@
         .role-badge { font-size: 10px; color: #7f8c8d; background: #f1f3f5; padding: 2px 10px; border-radius: 12px; display: inline-block; }
         .cost-badge { font-size: 10px; color: #e67e22; background: #fef5e7; padding: 2px 10px; border-radius: 12px; display: inline-block; }
         .reset-area { text-align: center; margin-top: 12px; }
+        
         .griffin-box {
             background: #fff8e1;
             border-radius: 10px;
@@ -150,6 +151,7 @@
             align-items: center;
             gap: 12px;
             margin-top: 12px;
+            border: 2px solid #f0e6d0;
         }
         .griffin-avatar {
             font-size: 40px;
@@ -165,7 +167,6 @@
         .status-bar { margin-top: 10px; font-size: 13px; color: #2980b9; text-align: center; min-height: 20px; }
         .footer-hint { text-align: center; margin-top: 6px; font-size: 11px; color: #aaa; }
         
-        /* Win Modal */
         .win-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -209,7 +210,6 @@
         .win-griffin span:last-child { font-size: 13px; color: #3e2723; flex: 1; }
         .hidden { display: none !important; }
         
-        /* Start Menu */
         .start-menu { text-align: center; padding: 20px 0; }
         .start-title { font-size: 32px; color: #2c3e50; margin: 15px 0; }
         .start-story {
@@ -235,11 +235,6 @@
             transition: all 0.2s;
         }
         .start-btn:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(39,174,96,0.3); }
-        .btn-disabled {
-            background: #bdc3c7 !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-        }
 
         @media (max-width: 1000px) {
             .columns { grid-template-columns: 1fr 1fr; }
@@ -256,7 +251,7 @@
 
 <div id="app" class="game-container">
 
-    <!-- ===== START MENU ===== -->
+    <!-- START MENU -->
     <div id="startMenu" class="start-menu">
         <div style="font-size:48px;">🎓</div>
         <div class="start-title">Распределение задач на мероприятии</div>
@@ -271,7 +266,7 @@
         <button class="start-btn" onclick="startGame()">🚀 Начать игру</button>
     </div>
 
-    <!-- ===== GAME AREA ===== -->
+    <!-- GAME AREA -->
     <div id="gameArea" class="hidden">
         <div class="header">
             <span class="title">🎓 Распределение задач</span>
@@ -309,7 +304,7 @@
         </div>
     </div>
 
-    <!-- ===== WIN MODAL ===== -->
+    <!-- WIN MODAL -->
     <div id="winModal" class="win-overlay hidden">
         <div class="win-modal">
             <div style="font-size:48px;">🏆</div>
@@ -335,19 +330,19 @@
 //  DATA
 // ============================================================
 const participantsData = [
-    { id: 0, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼', color: '#e74c3c', avatar: 'anna.jpg' },
-    { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝', color: '#3498db', avatar: 'denis.jpg' },
-    { id: 2, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер', emoji: '👨‍💻', color: '#f39c12', avatar: 'igor.jpg' },
-    { id: 3, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨', color: '#2ecc71', avatar: 'maria.jpg' },
-    { id: 4, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱', color: '#9b59b6', avatar: 'valeria.jpg' }
+    { id: 0, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱', color: '#9b59b6', avatar: 'valeria.jpg', maxFatigue: 3 },
+    { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝', color: '#3498db', avatar: 'denis.jpg', maxFatigue: 3 },
+    { id: 2, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼', color: '#e74c3c', avatar: 'anna.jpg', maxFatigue: 3 },
+    { id: 3, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер', emoji: '👨‍💻', color: '#f39c12', avatar: 'igor.jpg', maxFatigue: 3 },
+    { id: 4, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨', color: '#2ecc71', avatar: 'maria.jpg', maxFatigue: 3 }
 ];
 
 const mainTasksData = [
-    { id: 0, name: 'Разработка логотипа', correctRole: 'Дизайнер', emoji: '🎨' },
-    { id: 1, name: 'Настройка проектора', correctRole: 'Технический волонтер', emoji: '📽️' },
-    { id: 2, name: 'Продвижение в соцсетях', correctRole: 'SMM-менеджер', emoji: '📱' },
-    { id: 3, name: 'Встреча гостей', correctRole: 'Модератор', emoji: '🤝' },
-    { id: 4, name: 'Составление протокола', correctRole: 'Секретарь', emoji: '📋' }
+    { id: 0, name: 'Встреча гостей', correctRole: 'Модератор', emoji: '🤝' },
+    { id: 1, name: 'Разработка логотипа', correctRole: 'Дизайнер', emoji: '🎨' },
+    { id: 2, name: 'Составление протокола', correctRole: 'Секретарь', emoji: '📋' },
+    { id: 3, name: 'Продвижение в соцсетях', correctRole: 'SMM-менеджер', emoji: '📱' },
+    { id: 4, name: 'Настройка проектора', correctRole: 'Технический волонтер', emoji: '📽️' }
 ];
 
 const extraTasksData = [
@@ -380,10 +375,6 @@ function shuffle(arr) {
     return arr;
 }
 
-function deepCopy(arr) {
-    return arr.map(item => ({ ...item, fatigue: 0, tasksDone: 0 }));
-}
-
 function getParticipant(id) { return participants.find(p => p.id === id); }
 function getMainTask(id) { return mainTasks.find(t => t.id === id); }
 function getExtraTask(id) { return extraTasks.find(t => t.id === id); }
@@ -406,6 +397,7 @@ function renderParticipants() {
         const fatigueRatio = (p.maxFatigue - p.fatigue) / p.maxFatigue;
         const fatigueColor = fatigueRatio > 0.6 ? '#27ae60' : fatigueRatio > 0.3 ? '#f39c12' : '#e74c3c';
         const fatigueWidth = Math.max(0, fatigueRatio * 100);
+        // Блокируем только если устал ИЛИ уже выполнил основную задачу
         const isDisabled = p.fatigue >= p.maxFatigue || assignedMainParticipants.has(p.id);
         const isSelected = selectedParticipant === p.id;
 
@@ -509,7 +501,8 @@ function updateStatusBar() {
 }
 
 function setGriffinMessage(msg) {
-    document.getElementById('griffinMessage').textContent = msg;
+    const el = document.getElementById('griffinMessage');
+    if (el) el.textContent = msg;
 }
 
 // ============================================================
@@ -524,12 +517,12 @@ function selectParticipant(id) {
         return;
     }
     if (assignedMainParticipants.has(p.id)) {
-        setGriffinMessage(`❌ ${p.name} уже выполнил основную задачу!`);
-        return;
+        setGriffinMessage(`❌ ${p.name} уже выполнил основную задачу! Но может выполнять дополнительные.`);
+        // Всё равно даём выбрать для доп. задач
     }
     selectedParticipant = id;
     render();
-    setGriffinMessage(`✅ Выбран ${p.name}. Выбери задачу.`);
+    setGriffinMessage(`✅ Выбран ${p.name}. Выбери задачу (основную или дополнительную).`);
 }
 
 function assignMainTask(taskId) {
@@ -540,6 +533,12 @@ function assignMainTask(taskId) {
     const p = getParticipant(selectedParticipant);
     const task = getMainTask(taskId);
     if (!p || !task) return;
+
+    // Проверяем, не устал ли
+    if (p.fatigue >= p.maxFatigue) {
+        setGriffinMessage(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
+        return;
+    }
 
     if (p.role === task.correctRole) {
         assignedMainTasks.add(taskId);
@@ -571,11 +570,15 @@ function assignExtraTask(taskId) {
         return;
     }
 
+    // Назначаем дополнительную задачу — НЕ блокируем участника!
     assignedExtraTasks.add(taskId);
     p.fatigue += task.fatigueCost;
     p.tasksDone += 1;
+    
+    // НЕ сбрасываем selectedParticipant, чтобы можно было назначить несколько доп. задач!
     render();
     setGriffinMessage(`🎉 ${p.name} → '${task.name}'! +${task.fatigueCost}⚡ (⚡${p.fatigue}/${p.maxFatigue})`);
+    document.getElementById('statusBar').textContent = `Выбран: ${p.name} (можно ещё доп. задачи)`;
     
     if (assignedMainTasks.size === mainTasks.length) {
         checkWinCondition();
@@ -591,7 +594,7 @@ function checkWinCondition() {
 }
 
 // ============================================================
-//  DETAILS (alert)
+//  DETAILS
 // ============================================================
 function showParticipantDetail(id) {
     const p = getParticipant(id);
@@ -667,8 +670,13 @@ function resetGame() {
 }
 
 function initGame() {
-    // Глубокое копирование с обнулением fatigue и tasksDone
-    participants = participantsData.map(p => ({ ...p, fatigue: 0, tasksDone: 0 }));
+    // Глубокое копирование с обнулением
+    participants = participantsData.map(p => ({ 
+        ...p, 
+        fatigue: 0, 
+        tasksDone: 0,
+        maxFatigue: p.maxFatigue || 3 
+    }));
     mainTasks = mainTasksData.map(t => ({ ...t }));
     extraTasks = extraTasksData.map(t => ({ ...t }));
     
@@ -676,7 +684,6 @@ function initGame() {
     shuffle(mainTasks);
     shuffle(extraTasks);
     
-    // Переназначаем id после перемешивания
     participants.forEach((p, i) => p.id = i);
     mainTasks.forEach((t, i) => t.id = i);
     extraTasks.forEach((t, i) => t.id = i + 5);
