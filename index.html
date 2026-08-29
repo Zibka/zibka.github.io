@@ -13,15 +13,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
         .game-container {
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             padding: 30px;
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
-            margin: 20px;
         }
         .header {
             display: flex;
@@ -31,8 +31,8 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .title { font-size: 24px; font-weight: bold; color: #2c3e50; }
-        .progress { font-size: 16px; color: #2980b9; font-weight: bold; }
+        .title { font-size: 22px; font-weight: bold; color: #2c3e50; }
+        .progress { font-size: 15px; color: #2980b9; font-weight: bold; }
         .columns {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -66,25 +66,40 @@
             gap: 10px;
         }
         .avatar {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #ecf0f1;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            flex-shrink: 0;
         }
-        .card-info { flex: 1; }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-info { flex: 1; min-width: 0; }
         .card-name { font-weight: bold; font-size: 14px; }
         .card-desc { font-size: 12px; color: #666; }
         .card-stats {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             font-size: 12px;
             color: #888;
             margin: 6px 0;
             flex-wrap: wrap;
+            align-items: center;
+        }
+        .fatigue-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 80px;
         }
         .fatigue-bar {
             height: 6px;
@@ -98,31 +113,35 @@
             border-radius: 3px;
             transition: width 0.3s;
         }
+        .fatigue-text {
+            font-size: 11px;
+            color: #555;
+            min-width: 32px;
+            text-align: right;
+        }
         .btn {
-            padding: 5px 14px;
+            padding: 4px 12px;
             border: none;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
         .btn-select { background: #3498db; color: white; }
-        .btn-select.active { background: #2980b9; }
+        .btn-select.active { background: #2980b9; box-shadow: 0 0 0 2px #2980b9; }
         .btn-assign { background: #e67e22; color: white; }
         .btn-extra { background: #9b59b6; color: white; }
         .btn-info { background: #ecf0f1; color: #2c3e50; }
-        .btn-reset { background: #ff6b6b; color: white; padding: 10px 30px; font-size: 14px; }
+        .btn-reset { background: #ff6b6b; color: white; padding: 8px 28px; font-size: 13px; }
         .btn-menu { background: #95a5a6; color: white; }
         .btn-success { background: #27ae60; color: white; }
-        
         .card-actions { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
-        .role-badge { font-size: 11px; color: #7f8c8d; background: #f1f3f5; padding: 2px 10px; border-radius: 12px; }
-        .cost-badge { font-size: 11px; color: #e67e22; background: #fef5e7; padding: 2px 10px; border-radius: 12px; }
-        .fatigue-text { font-size: 12px; color: #555; min-width: 35px; }
-        
+        .role-badge { font-size: 10px; color: #7f8c8d; background: #f1f3f5; padding: 2px 10px; border-radius: 12px; display: inline-block; }
+        .cost-badge { font-size: 10px; color: #e67e22; background: #fef5e7; padding: 2px 10px; border-radius: 12px; display: inline-block; }
+        .reset-area { text-align: center; margin-top: 12px; }
         .griffin-box {
             background: #fff8e1;
             border-radius: 10px;
@@ -132,17 +151,21 @@
             gap: 12px;
             margin-top: 12px;
         }
-        .griffin-avatar { font-size: 32px; }
-        .griffin-text { font-size: 13px; color: #3e2723; flex: 1; }
-        .status-bar { margin-top: 12px; font-size: 13px; color: #2980b9; text-align: center; }
-        .reset-area { text-align: center; margin-top: 12px; }
-        
-        @media (max-width: 900px) {
-            .columns { grid-template-columns: 1fr; }
-            .game-container { padding: 15px; margin: 10px; }
-            .title { font-size: 18px; }
+        .griffin-avatar {
+            font-size: 40px;
+            flex-shrink: 0;
         }
-
+        .griffin-avatar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .griffin-text { font-size: 13px; color: #3e2723; flex: 1; }
+        .status-bar { margin-top: 10px; font-size: 13px; color: #2980b9; text-align: center; min-height: 20px; }
+        .footer-hint { text-align: center; margin-top: 6px; font-size: 11px; color: #aaa; }
+        
+        /* Win Modal */
         .win-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -156,9 +179,9 @@
         .win-modal {
             background: white;
             border-radius: 24px;
-            padding: 40px;
-            max-width: 550px;
-            width: 90%;
+            padding: 35px 40px;
+            max-width: 500px;
+            width: 92%;
             text-align: center;
             animation: popIn 0.4s ease;
         }
@@ -166,52 +189,105 @@
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .win-title { font-size: 32px; font-weight: bold; color: #f1c40f; }
-        .win-subtitle { font-size: 18px; color: #2c3e50; margin: 15px 0; }
-        .win-message { font-size: 14px; color: #555; line-height: 1.6; background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 15px 0; }
-        .win-stats { font-size: 13px; color: #7f8c8d; text-align: left; padding: 10px 0; }
-        .win-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
-        .win-btn { padding: 10px 30px; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .win-title { font-size: 30px; font-weight: bold; color: #f1c40f; }
+        .win-subtitle { font-size: 17px; color: #2c3e50; margin: 12px 0; }
+        .win-message { font-size: 14px; color: #555; line-height: 1.6; background: #f8f9fa; padding: 18px; border-radius: 12px; margin: 12px 0; white-space: pre-line; }
+        .win-stats { font-size: 13px; color: #7f8c8d; text-align: left; padding: 10px 0; line-height: 1.8; }
+        .win-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+        .win-btn { padding: 10px 28px; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
         .win-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .win-griffin {
+            margin-top: 12px;
+            background: #fff8e1;
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .win-griffin span:first-child { font-size: 28px; }
+        .win-griffin span:last-child { font-size: 13px; color: #3e2723; flex: 1; }
         .hidden { display: none !important; }
+        
+        /* Start Menu */
+        .start-menu { text-align: center; padding: 20px 0; }
+        .start-title { font-size: 32px; color: #2c3e50; margin: 15px 0; }
+        .start-story {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px 25px;
+            text-align: left;
+            max-width: 600px;
+            margin: 20px auto;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #34495e;
+        }
+        .start-btn {
+            background: #27ae60;
+            color: white;
+            font-size: 18px;
+            padding: 14px 50px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .start-btn:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(39,174,96,0.3); }
+        .btn-disabled {
+            background: #bdc3c7 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
+        @media (max-width: 1000px) {
+            .columns { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 700px) {
+            .columns { grid-template-columns: 1fr; }
+            .game-container { padding: 15px; }
+            .title { font-size: 18px; }
+            .start-title { font-size: 24px; }
+        }
     </style>
 </head>
 <body>
+
 <div id="app" class="game-container">
-    <!-- Start Menu -->
-    <div id="startMenu">
-        <div style="text-align:center; padding:30px 0;">
-            <div style="font-size:48px;">🎓</div>
-            <h1 style="font-size:32px; color:#2c3e50; margin:15px 0;">Распределение задач</h1>
-            <div style="background:#f8f9fa; border-radius:12px; padding:20px; text-align:left; max-width:600px; margin:20px auto; font-size:14px; line-height:1.8; color:#34495e;">
-                📖 <b>Сюжет:</b><br>
-                Вы — руководитель мероприятия «День открытых дверей - 2027».<br>
-                В вашей команде 5 студентов с уникальными навыками.<br>
-                Распределите 5 основных задач, учитывая специализацию.<br>
-                ⚡ Участники устают — следите за уровнем!<br>
-                ⭐ Дополнительные задачи необязательны, но приносят бонусы!
-            </div>
-            <button class="btn" style="background:#27ae60; color:white; font-size:18px; padding:14px 50px;" onclick="startGame()">🚀 Начать игру</button>
+
+    <!-- ===== START MENU ===== -->
+    <div id="startMenu" class="start-menu">
+        <div style="font-size:48px;">🎓</div>
+        <div class="start-title">Распределение задач на мероприятии</div>
+        <div class="start-story">
+            📖 <b>Сюжет:</b><br>
+            Вы — руководитель мероприятия «День открытых дверей - 2027».<br>
+            В вашей команде 5 студентов с уникальными навыками.<br>
+            Распределите 5 основных задач, учитывая специализацию.<br>
+            ⚡ Участники устают — следите за уровнем!<br>
+            ⭐ Дополнительные задачи необязательны, но приносят бонусы!
         </div>
+        <button class="start-btn" onclick="startGame()">🚀 Начать игру</button>
     </div>
 
-    <!-- Game Area -->
+    <!-- ===== GAME AREA ===== -->
     <div id="gameArea" class="hidden">
         <div class="header">
             <span class="title">🎓 Распределение задач</span>
             <span class="progress" id="progressDisplay">📊 Прогресс: 0/5</span>
-            <button class="btn btn-menu" onclick="showStartMenu()">🏠 Меню</button>
+            <button class="btn btn-menu" onclick="goToMenu()">🏠 Меню</button>
         </div>
 
-        <div class="columns" id="columnsContainer">
+        <div class="columns">
             <!-- Participants -->
-            <div class="column" id="participantsColumn">
+            <div class="column">
                 <div class="column-title">👥 Участники</div>
                 <div id="participantsList"></div>
             </div>
 
-            <!-- Main Tasks -->
-            <div class="column" id="mainTasksColumn">
+            <!-- Main Tasks + Reset -->
+            <div class="column">
                 <div class="column-title">📋 Основные задачи</div>
                 <div id="mainTasksList"></div>
                 <div class="reset-area">
@@ -220,20 +296,20 @@
             </div>
 
             <!-- Extra Tasks + Griffin -->
-            <div class="column" id="extraColumn">
+            <div class="column">
                 <div class="column-title">⭐ Дополнительные задачи</div>
                 <div id="extraTasksList"></div>
                 <div class="griffin-box">
-                    <span class="griffin-avatar">🦅</span>
+                    <div class="griffin-avatar" id="griffinAvatar">🦅</div>
                     <span class="griffin-text" id="griffinMessage">Привет! Выбери участника, затем задачу.</span>
                 </div>
                 <div class="status-bar" id="statusBar"></div>
-                <div style="text-align:center; margin-top:6px; font-size:11px; color:#aaa;">F11 - полноэкранный режим</div>
+                <div class="footer-hint">F11 — полноэкранный режим</div>
             </div>
         </div>
     </div>
 
-    <!-- Win Modal -->
+    <!-- ===== WIN MODAL ===== -->
     <div id="winModal" class="win-overlay hidden">
         <div class="win-modal">
             <div style="font-size:48px;">🏆</div>
@@ -243,24 +319,27 @@
             <div class="win-stats" id="winStats"></div>
             <div class="win-buttons">
                 <button class="win-btn" style="background:#27ae60; color:white;" onclick="resetGame()">🔄 Играть снова</button>
-                <button class="win-btn" style="background:#3498db; color:white;" onclick="showStartMenu()">🏠 Главное меню</button>
+                <button class="win-btn" style="background:#3498db; color:white;" onclick="goToMenu()">🏠 Главное меню</button>
             </div>
-            <div style="margin-top:12px; background:#fff8e1; border-radius:10px; padding:10px; display:flex; align-items:center; gap:10px;">
-                <span style="font-size:28px;">🦅</span>
-                <span style="font-size:13px; color:#3e2723;" id="winGriffinMessage">Отличная работа, руководитель!</span>
+            <div class="win-griffin">
+                <span>🦅</span>
+                <span id="winGriffinMessage">Отличная работа, руководитель!</span>
             </div>
         </div>
     </div>
+
 </div>
 
 <script>
-// ============ DATA ============
+// ============================================================
+//  DATA
+// ============================================================
 const participantsData = [
-    { id: 0, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼', color: '#e74c3c', fatigue: 0, maxFatigue: 3, tasksDone: 0 },
-    { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝', color: '#3498db', fatigue: 0, maxFatigue: 3, tasksDone: 0 },
-    { id: 2, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер', emoji: '👨‍💻', color: '#f39c12', fatigue: 0, maxFatigue: 3, tasksDone: 0 },
-    { id: 3, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨', color: '#2ecc71', fatigue: 0, maxFatigue: 3, tasksDone: 0 },
-    { id: 4, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱', color: '#9b59b6', fatigue: 0, maxFatigue: 3, tasksDone: 0 }
+    { id: 0, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼', color: '#e74c3c', avatar: 'anna.jpg' },
+    { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝', color: '#3498db', avatar: 'denis.jpg' },
+    { id: 2, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер', emoji: '👨‍💻', color: '#f39c12', avatar: 'igor.jpg' },
+    { id: 3, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨', color: '#2ecc71', avatar: 'maria.jpg' },
+    { id: 4, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱', color: '#9b59b6', avatar: 'valeria.jpg' }
 ];
 
 const mainTasksData = [
@@ -277,10 +356,12 @@ const extraTasksData = [
     { id: 7, name: 'Раздача воды', emoji: '💧', fatigueCost: 1 }
 ];
 
-// ============ STATE ============
-let participants = JSON.parse(JSON.stringify(participantsData));
-let mainTasks = JSON.parse(JSON.stringify(mainTasksData));
-let extraTasks = JSON.parse(JSON.stringify(extraTasksData));
+// ============================================================
+//  STATE
+// ============================================================
+let participants = [];
+let mainTasks = [];
+let extraTasks = [];
 let selectedParticipant = null;
 let assignedMainTasks = new Set();
 let assignedExtraTasks = new Set();
@@ -288,7 +369,9 @@ let assignedMainParticipants = new Set();
 let gameCompleted = false;
 let winShown = false;
 
-// ============ HELPERS ============
+// ============================================================
+//  HELPERS
+// ============================================================
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -297,11 +380,17 @@ function shuffle(arr) {
     return arr;
 }
 
+function deepCopy(arr) {
+    return arr.map(item => ({ ...item, fatigue: 0, tasksDone: 0 }));
+}
+
 function getParticipant(id) { return participants.find(p => p.id === id); }
 function getMainTask(id) { return mainTasks.find(t => t.id === id); }
 function getExtraTask(id) { return extraTasks.find(t => t.id === id); }
 
-// ============ RENDER ============
+// ============================================================
+//  RENDER
+// ============================================================
 function render() {
     renderParticipants();
     renderMainTasks();
@@ -324,17 +413,19 @@ function renderParticipants() {
         card.className = 'card';
         card.innerHTML = `
             <div class="card-header">
-                <div class="avatar" style="background:${p.color}20; color:${p.color};">${p.emoji}</div>
+                <div class="avatar">
+                    <img src="avatars/${p.avatar}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.emoji}';this.parentElement.style.fontSize='24px';">
+                </div>
                 <div class="card-info">
                     <div class="card-name">${p.name}</div>
                     <div class="card-desc">${p.desc}</div>
                     <div class="card-stats">
                         <span>📋 ${p.tasksDone}</span>
-                        <span style="display:flex;align-items:center;gap:4px;flex:1;">
+                        <div class="fatigue-wrap">
                             ⚡
-                            <span class="fatigue-bar"><span class="fatigue-fill" style="width:${fatigueWidth}%;background:${fatigueColor};"></span></span>
+                            <div class="fatigue-bar"><div class="fatigue-fill" style="width:${fatigueWidth}%;background:${fatigueColor};"></div></div>
                             <span class="fatigue-text">${p.fatigue}/${p.maxFatigue}</span>
-                        </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -421,7 +512,9 @@ function setGriffinMessage(msg) {
     document.getElementById('griffinMessage').textContent = msg;
 }
 
-// ============ GAME LOGIC ============
+// ============================================================
+//  GAME LOGIC
+// ============================================================
 function selectParticipant(id) {
     if (gameCompleted) { setGriffinMessage('🎉 Игра уже завершена! Начни заново.'); return; }
     const p = getParticipant(id);
@@ -497,7 +590,9 @@ function checkWinCondition() {
     }
 }
 
-// ============ DETAILS ============
+// ============================================================
+//  DETAILS (alert)
+// ============================================================
 function showParticipantDetail(id) {
     const p = getParticipant(id);
     if (!p) return;
@@ -516,33 +611,29 @@ function showExtraTaskDetail(id) {
     alert(`${t.emoji} ${t.name}\n\n⚡ Стоимость усталости: +${t.fatigueCost}`);
 }
 
-// ============ WIN SCREEN ============
+// ============================================================
+//  WIN SCREEN
+// ============================================================
 function showWinScreen() {
     const totalExtra = extraTasks.length;
     const doneExtra = assignedExtraTasks.size;
     
-    let title, message, emoji, color, griffinMsg;
+    let subtitle, message, griffinMsg;
     if (doneExtra === totalExtra) {
-        title = '🌟 ИДЕАЛЬНОЕ ПРОХОЖДЕНИЕ! 🌟';
+        subtitle = '🌟 ИДЕАЛЬНОЕ ПРОХОЖДЕНИЕ! 🌟';
         message = 'Вы распределили все основные И дополнительные задачи!\nМероприятие прошло на высшем уровне!';
-        emoji = '🌟';
-        color = '#27ae60';
         griffinMsg = 'Ты — легендарный руководитель! 👏';
     } else if (doneExtra >= totalExtra / 2) {
-        title = '✨ ОТЛИЧНАЯ РАБОТА! ✨';
+        subtitle = '✨ ОТЛИЧНАЯ РАБОТА! ✨';
         message = `Вы распределили все основные задачи!\nДополнительные задачи выполнены: ${doneExtra}/${totalExtra}`;
-        emoji = '✨';
-        color = '#3498db';
         griffinMsg = 'Отличная работа, руководитель! 🎉';
     } else {
-        title = '✅ ВСЁ ПОД КОНТРОЛЕМ! ✅';
+        subtitle = '✅ ВСЁ ПОД КОНТРОЛЕМ! ✅';
         message = `Вы распределили все основные задачи!\nДополнительные задачи выполнены: ${doneExtra}/${totalExtra}`;
-        emoji = '✅';
-        color = '#f39c12';
         griffinMsg = 'Главное — основные задачи выполнены! 👍';
     }
 
-    document.getElementById('winSubtitle').textContent = title;
+    document.getElementById('winSubtitle').textContent = subtitle;
     document.getElementById('winMessage').textContent = message;
     document.getElementById('winGriffinMessage').textContent = griffinMsg;
     document.getElementById('winStats').innerHTML = `
@@ -555,14 +646,16 @@ function showWinScreen() {
     document.getElementById('winModal').classList.remove('hidden');
 }
 
-// ============ NAVIGATION ============
+// ============================================================
+//  NAVIGATION
+// ============================================================
 function startGame() {
     document.getElementById('startMenu').classList.add('hidden');
     document.getElementById('gameArea').classList.remove('hidden');
     initGame();
 }
 
-function showStartMenu() {
+function goToMenu() {
     document.getElementById('winModal').classList.add('hidden');
     document.getElementById('gameArea').classList.add('hidden');
     document.getElementById('startMenu').classList.remove('hidden');
@@ -574,24 +667,35 @@ function resetGame() {
 }
 
 function initGame() {
-    participants = JSON.parse(JSON.stringify(participantsData));
-    mainTasks = JSON.parse(JSON.stringify(mainTasksData));
-    extraTasks = JSON.parse(JSON.stringify(extraTasksData));
+    // Глубокое копирование с обнулением fatigue и tasksDone
+    participants = participantsData.map(p => ({ ...p, fatigue: 0, tasksDone: 0 }));
+    mainTasks = mainTasksData.map(t => ({ ...t }));
+    extraTasks = extraTasksData.map(t => ({ ...t }));
+    
     shuffle(participants);
     shuffle(mainTasks);
     shuffle(extraTasks);
+    
+    // Переназначаем id после перемешивания
+    participants.forEach((p, i) => p.id = i);
+    mainTasks.forEach((t, i) => t.id = i);
+    extraTasks.forEach((t, i) => t.id = i + 5);
+    
     selectedParticipant = null;
     assignedMainTasks = new Set();
     assignedExtraTasks = new Set();
     assignedMainParticipants = new Set();
     gameCompleted = false;
     winShown = false;
+    
     render();
     setGriffinMessage('🔄 Игра сброшена! Участники и задачи перемешаны!');
     document.getElementById('statusBar').textContent = '';
 }
 
-// ============ FULLSCREEN ============
+// ============================================================
+//  FULLSCREEN
+// ============================================================
 document.addEventListener('keydown', function(e) {
     if (e.key === 'F11') {
         e.preventDefault();
@@ -603,8 +707,11 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// ============ INIT ============
+// ============================================================
+//  INIT
+// ============================================================
 initGame();
 </script>
+
 </body>
 </html>
