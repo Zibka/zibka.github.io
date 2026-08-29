@@ -1019,4 +1019,32 @@
             assignedExtra = new Set();
             assignedMainParticipants = new Set();
             gameOver = false;
-            winShown = false
+            winShown = false;
+
+            render();
+            setGriffin('🔄 Игра сброшена! Участники и задачи перемешаны.');
+            document.getElementById('statusBar').textContent = '';
+        }
+
+        // ================================================================
+        //  FULLSCREEN (F11)
+        // ================================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                } else {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+        });
+
+        // ================================================================
+        //  START
+        // ================================================================
+        initGame();
+    </script>
+
+</body>
+</html>
