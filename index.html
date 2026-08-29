@@ -31,7 +31,6 @@
             margin: 8px 0;
         }
 
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -88,7 +87,6 @@
             background: #d5dbe3;
         }
 
-        /* ===== COLUMNS ===== */
         .columns {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -99,6 +97,8 @@
             background: #f7f9fc;
             border-radius: 16px;
             padding: 16px;
+            display: flex;
+            flex-direction: column;
         }
 
         .column-title {
@@ -110,7 +110,20 @@
             letter-spacing: 0.3px;
         }
 
-        /* ===== CARD ===== */
+        .scrollable {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 420px;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scrollable::-webkit-scrollbar-thumb {
+            background: #d0d7e2;
+            border-radius: 4px;
+        }
+
         .card {
             background: white;
             border-radius: 12px;
@@ -213,7 +226,6 @@
             flex-wrap: wrap;
         }
 
-        /* ===== BUTTONS ===== */
         .btn {
             border: none;
             padding: 5px 14px;
@@ -272,6 +284,7 @@
             color: white;
             padding: 8px 28px;
             font-size: 13px;
+            margin-top: 10px;
         }
 
         .btn-reset:hover:not(:disabled) {
@@ -298,10 +311,9 @@
 
         .reset-area {
             text-align: center;
-            margin-top: 14px;
+            margin-top: 4px;
         }
 
-        /* ===== GRIFFIN ===== */
         .griffin-box {
             background: #fef9ed;
             border-radius: 12px;
@@ -311,11 +323,26 @@
             gap: 14px;
             margin-top: 14px;
             border: 2px solid #f5edd6;
+            flex-shrink: 0;
         }
 
         .griffin-avatar {
             font-size: 40px;
             flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5edd6;
+        }
+
+        .griffin-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .griffin-text {
@@ -332,6 +359,7 @@
             min-height: 20px;
             margin-top: 8px;
             font-weight: 500;
+            flex-shrink: 0;
         }
 
         .hint {
@@ -339,9 +367,9 @@
             font-size: 11px;
             color: #b0b8c0;
             margin-top: 6px;
+            flex-shrink: 0;
         }
 
-        /* ===== START MENU ===== */
         .start-menu {
             text-align: center;
             padding: 24px 0;
@@ -384,7 +412,6 @@
             box-shadow: 0 6px 20px rgba(39, 174, 96, 0.25);
         }
 
-        /* ===== WIN MODAL ===== */
         .win-overlay {
             position: fixed;
             inset: 0;
@@ -494,7 +521,26 @@
             display: none !important;
         }
 
-        /* ===== RESPONSIVE ===== */
+        .extra-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .extra-tasks-scroll {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 260px;
+        }
+
+        .extra-tasks-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .extra-tasks-scroll::-webkit-scrollbar-thumb {
+            background: #d0d7e2;
+            border-radius: 4px;
+        }
+
         @media (max-width: 1024px) {
             .columns {
                 grid-template-columns: 1fr 1fr;
@@ -567,24 +613,27 @@
                 <!-- PARTICIPANTS -->
                 <div class="column">
                     <div class="column-title">👥 Участники</div>
-                    <div id="participantsList"></div>
+                    <div class="scrollable" id="participantsList"></div>
                 </div>
 
                 <!-- MAIN TASKS + RESET -->
                 <div class="column">
                     <div class="column-title">📋 Основные задачи</div>
-                    <div id="mainTasksList"></div>
+                    <div class="scrollable" id="mainTasksList"></div>
                     <div class="reset-area">
                         <button class="btn btn-reset" onclick="resetGame()">🔄 Начать заново</button>
                     </div>
                 </div>
 
                 <!-- EXTRA TASKS + GRIFFIN -->
-                <div class="column">
+                <div class="column extra-column">
                     <div class="column-title">⭐ Дополнительные задачи</div>
-                    <div id="extraTasksList"></div>
+                    <div class="extra-tasks-scroll" id="extraTasksList"></div>
                     <div class="griffin-box">
-                        <div class="griffin-avatar" id="griffinAvatar">🦅</div>
+                        <div class="griffin-avatar" id="griffinAvatar">
+                            <img src="avatars/griffin.jpg" alt="Грифон" 
+                                 onerror="this.style.display='none';this.parentElement.textContent='🦅';this.parentElement.style.fontSize='40px';">
+                        </div>
                         <span class="griffin-text" id="griffinMessage">Привет! Выбери участника, затем задачу.</span>
                     </div>
                     <div class="status-bar" id="statusBar"></div>
@@ -620,24 +669,24 @@
         //  DATA
         // ================================================================
         const PARTICIPANTS_DATA = [
-            { id: 0, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼',
-            avatar: 'anna.jpg' },
+            { id: 0, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨',
+            avatar: 'maria.jpg' },
             { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝',
             avatar: 'denis.jpg' },
-            { id: 2, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер',
-                emoji: '👨‍💻', avatar: 'igor.jpg' },
-            { id: 3, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨',
-            avatar: 'maria.jpg' },
-            { id: 4, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱',
-                avatar: 'valeria.jpg' }
+            { id: 2, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼',
+            avatar: 'anna.jpg' },
+            { id: 3, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱',
+            avatar: 'valeria.jpg' },
+            { id: 4, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер',
+                emoji: '👨‍💻', avatar: 'igor.jpg' }
         ];
 
         const MAIN_TASKS_DATA = [
-            { id: 0, name: 'Встреча гостей', correctRole: 'Модератор', emoji: '🤝' },
-            { id: 1, name: 'Разработка логотипа', correctRole: 'Дизайнер', emoji: '🎨' },
-            { id: 2, name: 'Составление протокола', correctRole: 'Секретарь', emoji: '📋' },
-            { id: 3, name: 'Продвижение в соцсетях', correctRole: 'SMM-менеджер', emoji: '📱' },
-            { id: 4, name: 'Настройка проектора', correctRole: 'Технический волонтер', emoji: '📽️' }
+            { id: 0, name: 'Составление протокола', correctRole: 'Секретарь', emoji: '📋' },
+            { id: 1, name: 'Настройка проектора', correctRole: 'Технический волонтер', emoji: '📽️' },
+            { id: 2, name: 'Разработка логотипа', correctRole: 'Дизайнер', emoji: '🎨' },
+            { id: 3, name: 'Встреча гостей', correctRole: 'Модератор', emoji: '🤝' },
+            { id: 4, name: 'Продвижение в соцсетях', correctRole: 'SMM-менеджер', emoji: '📱' }
         ];
 
         const EXTRA_TASKS_DATA = [
@@ -854,7 +903,6 @@
             assignedExtra.add(taskId);
             p.fatigue += t.fatigueCost;
             p.tasksDone += 1;
-            // НЕ сбрасываем selectedId — можно назначить несколько доп. задач
             render();
             setGriffin(`🎉 ${p.name} → «${t.name}»  +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
             document.getElementById('statusBar').textContent = `Выбран: ${p.name}  (можно ещё доп. задачи)`;
@@ -971,32 +1019,4 @@
             assignedExtra = new Set();
             assignedMainParticipants = new Set();
             gameOver = false;
-            winShown = false;
-
-            render();
-            setGriffin('🔄 Игра сброшена! Участники и задачи перемешаны.');
-            document.getElementById('statusBar').textContent = '';
-        }
-
-        // ================================================================
-        //  FULLSCREEN (F11)
-        // ================================================================
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'F11') {
-                e.preventDefault();
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => {});
-                } else {
-                    document.exitFullscreen().catch(() => {});
-                }
-            }
-        });
-
-        // ================================================================
-        //  START
-        // ================================================================
-        initGame();
-    </script>
-
-</body>
-</html>
+            winShown = false
