@@ -743,6 +743,7 @@
                 const ratio = (p.maxFatigue - p.fatigue) / p.maxFatigue;
                 const color = ratio > 0.6 ? '#27ae60' : ratio > 0.3 ? '#f39c12' : '#e74c3c';
                 const width = Math.max(0, ratio * 100);
+                // Блокируем только если устал или уже выполнил ОСНОВНУЮ задачу
                 const disabled = p.fatigue >= p.maxFatigue || assignedMainParticipants.has(p.id);
                 const active = selectedId === p.id;
 
@@ -856,6 +857,10 @@
                 setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
                 return;
             }
+            // Если участник уже выполнил основную задачу — его можно выбрать только для доп. задач
+            if (assignedMainParticipants.has(p.id)) {
+                setGriffin(`ℹ️ ${p.name} уже выполнил основную задачу. Может выполнять дополнительные.`);
+            }
             selectedId = id;
             render();
             setGriffin(`✅ Выбран ${p.name}. Выбери задачу.`);
@@ -870,17 +875,25 @@
             const t = getMainTask(taskId);
             if (!p || !t) return;
 
+            // Проверяем, не устал ли
+            if (p.fatigue >= p.maxFatigue) {
+                setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
+                return;
+            }
+
             if (p.role === t.correctRole) {
                 assignedMain.add(taskId);
                 assignedMainParticipants.add(p.id);
                 p.fatigue += 1;
                 p.tasksDone += 1;
+                // Сбрасываем выбор после ОСНОВНОЙ задачи
                 selectedId = null;
                 render();
                 setGriffin(`🎉 ${p.name} → «${t.name}»  ⚡ ${p.fatigue}/${p.maxFatigue}`);
                 checkWin();
             } else {
                 setGriffin(`❌ ${p.name} не подходит для «${t.name}»! 💡 Нужен ${t.correctRole}.`);
+                // Сбрасываем выбор после ошибки
                 selectedId = null;
                 render();
             }
@@ -903,6 +916,8 @@
             assignedExtra.add(taskId);
             p.fatigue += t.fatigueCost;
             p.tasksDone += 1;
+            
+            // НЕ СБРАСЫВАЕМ selectedId — можно назначить несколько доп. задач!
             render();
             setGriffin(`🎉 ${p.name} → «${t.name}»  +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
             document.getElementById('statusBar').textContent = `Выбран: ${p.name}  (можно ещё доп. задачи)`;
