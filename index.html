@@ -2,723 +2,1001 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Распределение задач на мероприятии</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f0f4f8;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: #eef2f7;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            padding: 16px;
         }
+
         .game-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            padding: 25px;
-            max-width: 1400px;
+            max-width: 1300px;
             width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            margin: 8px 0;
         }
+
+        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f2f5;
         }
-        .title { font-size: 22px; font-weight: bold; color: #2c3e50; }
-        .progress { font-size: 15px; color: #2980b9; font-weight: bold; }
-        .columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
-        .column {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-        }
-        .column-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border: 2px solid #e9ecef;
-            transition: all 0.2s;
-        }
-        .card:hover { border-color: #b0c4de; }
-        .card-header {
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a2634;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .avatar {
+
+        .header-title span {
+            font-size: 28px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .progress-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c7be5;
+            background: #e8f0fe;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .btn-menu {
+            background: #e8ecf1;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-menu:hover {
+            background: #d5dbe3;
+        }
+
+        /* ===== COLUMNS ===== */
+        .columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .column {
+            background: #f7f9fc;
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .column-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a2634;
+            text-align: center;
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border: 2px solid #e9edf2;
+            transition: 0.15s;
+        }
+
+        .card:hover {
+            border-color: #c5d0df;
+        }
+
+        .card-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-box {
             width: 48px;
             height: 48px;
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
-            background: #ecf0f1;
+            background: #eef1f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 22px;
         }
-        .avatar img {
+
+        .avatar-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .card-info { flex: 1; min-width: 0; }
-        .card-name { font-weight: bold; font-size: 14px; }
-        .card-desc { font-size: 12px; color: #666; }
+
+        .card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a2634;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #6b7a8a;
+            margin-top: 1px;
+        }
+
         .card-stats {
             display: flex;
-            gap: 12px;
-            font-size: 12px;
-            color: #888;
-            margin: 6px 0;
-            flex-wrap: wrap;
             align-items: center;
+            gap: 14px;
+            font-size: 12px;
+            color: #6b7a8a;
+            margin-top: 4px;
+            flex-wrap: wrap;
         }
+
         .fatigue-wrap {
             display: flex;
             align-items: center;
             gap: 6px;
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
         }
+
         .fatigue-bar {
             height: 6px;
-            background: #ecf0f1;
-            border-radius: 3px;
-            overflow: hidden;
+            background: #e9edf2;
+            border-radius: 4px;
             flex: 1;
+            overflow: hidden;
         }
+
         .fatigue-fill {
             height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s;
+            border-radius: 4px;
+            transition: width 0.25s ease;
         }
-        .fatigue-text {
+
+        .fatigue-label {
             font-size: 11px;
-            color: #555;
+            font-weight: 600;
+            color: #4a5a6a;
             min-width: 32px;
             text-align: right;
         }
-        .btn {
-            padding: 4px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
         }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-        .btn-select { background: #3498db; color: white; }
-        .btn-select.active { background: #2980b9; box-shadow: 0 0 0 2px #2980b9; }
-        .btn-assign { background: #e67e22; color: white; }
-        .btn-extra { background: #9b59b6; color: white; }
-        .btn-info { background: #ecf0f1; color: #2c3e50; }
-        .btn-reset { background: #ff6b6b; color: white; padding: 8px 28px; font-size: 13px; }
-        .btn-menu { background: #95a5a6; color: white; }
-        .btn-success { background: #27ae60; color: white; }
-        .card-actions { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
-        .role-badge { font-size: 10px; color: #7f8c8d; background: #f1f3f5; padding: 2px 10px; border-radius: 12px; display: inline-block; }
-        .cost-badge { font-size: 10px; color: #e67e22; background: #fef5e7; padding: 2px 10px; border-radius: 12px; display: inline-block; }
-        .reset-area { text-align: center; margin-top: 12px; }
-        
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            border: none;
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #eef1f5;
+            color: #1a2634;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-select {
+            background: #2c7be5;
+            color: white;
+        }
+
+        .btn-select.active {
+            background: #1a5fc7;
+            box-shadow: 0 0 0 2px #1a5fc7;
+        }
+
+        .btn-assign {
+            background: #e67e22;
+            color: white;
+        }
+
+        .btn-extra {
+            background: #8e44ad;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-info {
+            background: #eef1f5;
+            color: #2c3e50;
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 28px;
+            font-size: 13px;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            background: #c0392b;
+        }
+
+        .role-badge {
+            font-size: 10px;
+            color: #6b7a8a;
+            background: #eef1f5;
+            padding: 2px 10px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .cost-badge {
+            font-size: 10px;
+            color: #e67e22;
+            background: #fef5e7;
+            padding: 2px 10px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .reset-area {
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        /* ===== GRIFFIN ===== */
         .griffin-box {
-            background: #fff8e1;
-            border-radius: 10px;
-            padding: 12px 15px;
+            background: #fef9ed;
+            border-radius: 12px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-            border: 2px solid #f0e6d0;
+            gap: 14px;
+            margin-top: 14px;
+            border: 2px solid #f5edd6;
         }
+
         .griffin-avatar {
             font-size: 40px;
             flex-shrink: 0;
         }
-        .griffin-avatar img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
+
+        .griffin-text {
+            font-size: 13px;
+            color: #3e2e1a;
+            flex: 1;
+            line-height: 1.4;
         }
-        .griffin-text { font-size: 13px; color: #3e2723; flex: 1; }
-        .status-bar { margin-top: 10px; font-size: 13px; color: #2980b9; text-align: center; min-height: 20px; }
-        .footer-hint { text-align: center; margin-top: 6px; font-size: 11px; color: #aaa; }
-        
-        .win-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
-        }
-        .win-modal {
-            background: white;
-            border-radius: 24px;
-            padding: 35px 40px;
-            max-width: 500px;
-            width: 92%;
+
+        .status-bar {
             text-align: center;
-            animation: popIn 0.4s ease;
+            font-size: 13px;
+            color: #2c7be5;
+            min-height: 20px;
+            margin-top: 8px;
+            font-weight: 500;
         }
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+
+        .hint {
+            text-align: center;
+            font-size: 11px;
+            color: #b0b8c0;
+            margin-top: 6px;
         }
-        .win-title { font-size: 30px; font-weight: bold; color: #f1c40f; }
-        .win-subtitle { font-size: 17px; color: #2c3e50; margin: 12px 0; }
-        .win-message { font-size: 14px; color: #555; line-height: 1.6; background: #f8f9fa; padding: 18px; border-radius: 12px; margin: 12px 0; white-space: pre-line; }
-        .win-stats { font-size: 13px; color: #7f8c8d; text-align: left; padding: 10px 0; line-height: 1.8; }
-        .win-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-        .win-btn { padding: 10px 28px; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .win-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .win-griffin {
-            margin-top: 12px;
-            background: #fff8e1;
-            border-radius: 10px;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+
+        /* ===== START MENU ===== */
+        .start-menu {
+            text-align: center;
+            padding: 24px 0;
         }
-        .win-griffin span:first-child { font-size: 28px; }
-        .win-griffin span:last-child { font-size: 13px; color: #3e2723; flex: 1; }
-        .hidden { display: none !important; }
-        
-        .start-menu { text-align: center; padding: 20px 0; }
-        .start-title { font-size: 32px; color: #2c3e50; margin: 15px 0; }
+
+        .start-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #1a2634;
+            margin: 12px 0;
+        }
+
         .start-story {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px 25px;
+            background: #f7f9fc;
+            border-radius: 16px;
+            padding: 20px 24px;
+            max-width: 560px;
+            margin: 16px auto;
             text-align: left;
-            max-width: 600px;
-            margin: 20px auto;
             font-size: 14px;
-            line-height: 1.8;
-            color: #34495e;
+            line-height: 1.7;
+            color: #2c3e50;
         }
+
         .start-btn {
             background: #27ae60;
             color: white;
             font-size: 18px;
-            padding: 14px 50px;
+            font-weight: 700;
+            padding: 14px 48px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .start-btn:hover {
+            background: #219150;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.25);
+        }
+
+        /* ===== WIN MODAL ===== */
+        .win-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .win-modal {
+            background: white;
+            border-radius: 28px;
+            padding: 32px 36px;
+            max-width: 480px;
+            width: 94%;
+            text-align: center;
+            animation: popIn 0.4s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .win-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f1c40f;
+        }
+
+        .win-subtitle {
+            font-size: 17px;
+            color: #1a2634;
+            margin: 10px 0 14px;
+        }
+
+        .win-message {
+            font-size: 14px;
+            color: #4a5a6a;
+            background: #f7f9fc;
+            padding: 16px;
+            border-radius: 14px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .win-stats {
+            text-align: left;
+            font-size: 13px;
+            color: #6b7a8a;
+            padding: 10px 0;
+            line-height: 1.9;
+        }
+
+        .win-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .win-btn {
+            padding: 10px 26px;
             border: none;
             border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
+            transition: 0.2s;
         }
-        .start-btn:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(39,174,96,0.3); }
 
-        @media (max-width: 1000px) {
-            .columns { grid-template-columns: 1fr 1fr; }
+        .win-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
+
+        .win-griffin {
+            margin-top: 14px;
+            background: #fef9ed;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .win-griffin span:first-child {
+            font-size: 30px;
+        }
+
+        .win-griffin span:last-child {
+            font-size: 13px;
+            color: #3e2e1a;
+            flex: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .columns {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         @media (max-width: 700px) {
-            .columns { grid-template-columns: 1fr; }
-            .game-container { padding: 15px; }
-            .title { font-size: 18px; }
-            .start-title { font-size: 24px; }
+            .columns {
+                grid-template-columns: 1fr;
+            }
+
+            .game-container {
+                padding: 14px;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+
+            .header-title span {
+                font-size: 22px;
+            }
+
+            .start-title {
+                font-size: 24px;
+            }
+
+            .win-modal {
+                padding: 24px 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div id="app" class="game-container">
+    <div class="game-container" id="app">
 
-    <!-- START MENU -->
-    <div id="startMenu" class="start-menu">
-        <div style="font-size:48px;">🎓</div>
-        <div class="start-title">Распределение задач на мероприятии</div>
-        <div class="start-story">
-            📖 <b>Сюжет:</b><br>
-            Вы — руководитель мероприятия «День открытых дверей - 2027».<br>
-            В вашей команде 5 студентов с уникальными навыками.<br>
-            Распределите 5 основных задач, учитывая специализацию.<br>
-            ⚡ Участники устают — следите за уровнем!<br>
-            ⭐ Дополнительные задачи необязательны, но приносят бонусы!
-        </div>
-        <button class="start-btn" onclick="startGame()">🚀 Начать игру</button>
-    </div>
-
-    <!-- GAME AREA -->
-    <div id="gameArea" class="hidden">
-        <div class="header">
-            <span class="title">🎓 Распределение задач</span>
-            <span class="progress" id="progressDisplay">📊 Прогресс: 0/5</span>
-            <button class="btn btn-menu" onclick="goToMenu()">🏠 Меню</button>
-        </div>
-
-        <div class="columns">
-            <!-- Participants -->
-            <div class="column">
-                <div class="column-title">👥 Участники</div>
-                <div id="participantsList"></div>
+        <!-- ========== START MENU ========== -->
+        <div id="startMenu" class="start-menu">
+            <div style="font-size:56px;">🎓</div>
+            <div class="start-title">Распределение задач</div>
+            <div class="start-story">
+                📖 <b>Сюжет:</b><br>
+                Вы — руководитель мероприятия «День открытых дверей — 2027».<br>
+                В вашей команде 5 студентов с уникальными навыками.<br>
+                Распределите 5 основных задач, учитывая специализацию.<br><br>
+                ⚡ Участники устают — следите за уровнем!<br>
+                ⭐ Дополнительные задачи необязательны, но приносят бонусы!
             </div>
+            <button class="start-btn" onclick="startGame()">🚀 Начать игру</button>
+        </div>
 
-            <!-- Main Tasks + Reset -->
-            <div class="column">
-                <div class="column-title">📋 Основные задачи</div>
-                <div id="mainTasksList"></div>
-                <div class="reset-area">
-                    <button class="btn btn-reset" onclick="resetGame()">🔄 Начать заново</button>
+        <!-- ========== GAME ========== -->
+        <div id="gameArea" class="hidden">
+
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-title">
+                    <span>🎓</span> Распределение задач
+                </div>
+                <div class="header-right">
+                    <span class="progress-text" id="progressDisplay">📊 0 / 5</span>
+                    <button class="btn-menu" onclick="goToMenu()">🏠 Меню</button>
                 </div>
             </div>
 
-            <!-- Extra Tasks + Griffin -->
-            <div class="column">
-                <div class="column-title">⭐ Дополнительные задачи</div>
-                <div id="extraTasksList"></div>
-                <div class="griffin-box">
-                    <div class="griffin-avatar" id="griffinAvatar">🦅</div>
-                    <span class="griffin-text" id="griffinMessage">Привет! Выбери участника, затем задачу.</span>
+            <!-- COLUMNS -->
+            <div class="columns">
+
+                <!-- PARTICIPANTS -->
+                <div class="column">
+                    <div class="column-title">👥 Участники</div>
+                    <div id="participantsList"></div>
                 </div>
-                <div class="status-bar" id="statusBar"></div>
-                <div class="footer-hint">F11 — полноэкранный режим</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- WIN MODAL -->
-    <div id="winModal" class="win-overlay hidden">
-        <div class="win-modal">
-            <div style="font-size:48px;">🏆</div>
-            <div class="win-title">ПОЗДРАВЛЯЕМ!</div>
-            <div class="win-subtitle" id="winSubtitle">Идеальное прохождение!</div>
-            <div class="win-message" id="winMessage"></div>
-            <div class="win-stats" id="winStats"></div>
-            <div class="win-buttons">
-                <button class="win-btn" style="background:#27ae60; color:white;" onclick="resetGame()">🔄 Играть снова</button>
-                <button class="win-btn" style="background:#3498db; color:white;" onclick="goToMenu()">🏠 Главное меню</button>
-            </div>
-            <div class="win-griffin">
-                <span>🦅</span>
-                <span id="winGriffinMessage">Отличная работа, руководитель!</span>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<script>
-// ============================================================
-//  DATA
-// ============================================================
-const participantsData = [
-    { id: 0, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱', color: '#9b59b6', avatar: 'valeria.jpg', maxFatigue: 3 },
-    { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝', color: '#3498db', avatar: 'denis.jpg', maxFatigue: 3 },
-    { id: 2, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼', color: '#e74c3c', avatar: 'anna.jpg', maxFatigue: 3 },
-    { id: 3, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер', emoji: '👨‍💻', color: '#f39c12', avatar: 'igor.jpg', maxFatigue: 3 },
-    { id: 4, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨', color: '#2ecc71', avatar: 'maria.jpg', maxFatigue: 3 }
-];
-
-const mainTasksData = [
-    { id: 0, name: 'Встреча гостей', correctRole: 'Модератор', emoji: '🤝' },
-    { id: 1, name: 'Разработка логотипа', correctRole: 'Дизайнер', emoji: '🎨' },
-    { id: 2, name: 'Составление протокола', correctRole: 'Секретарь', emoji: '📋' },
-    { id: 3, name: 'Продвижение в соцсетях', correctRole: 'SMM-менеджер', emoji: '📱' },
-    { id: 4, name: 'Настройка проектора', correctRole: 'Технический волонтер', emoji: '📽️' }
-];
-
-const extraTasksData = [
-    { id: 5, name: 'Уборка зала', emoji: '🧹', fatigueCost: 1 },
-    { id: 6, name: 'Фотосъёмка', emoji: '📸', fatigueCost: 2 },
-    { id: 7, name: 'Раздача воды', emoji: '💧', fatigueCost: 1 }
-];
-
-// ============================================================
-//  STATE
-// ============================================================
-let participants = [];
-let mainTasks = [];
-let extraTasks = [];
-let selectedParticipant = null;
-let assignedMainTasks = new Set();
-let assignedExtraTasks = new Set();
-let assignedMainParticipants = new Set();
-let gameCompleted = false;
-let winShown = false;
-
-// ============================================================
-//  HELPERS
-// ============================================================
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-function getParticipant(id) { return participants.find(p => p.id === id); }
-function getMainTask(id) { return mainTasks.find(t => t.id === id); }
-function getExtraTask(id) { return extraTasks.find(t => t.id === id); }
-
-// ============================================================
-//  RENDER
-// ============================================================
-function render() {
-    renderParticipants();
-    renderMainTasks();
-    renderExtraTasks();
-    updateProgress();
-    updateStatusBar();
-}
-
-function renderParticipants() {
-    const container = document.getElementById('participantsList');
-    container.innerHTML = '';
-    participants.forEach(p => {
-        const fatigueRatio = (p.maxFatigue - p.fatigue) / p.maxFatigue;
-        const fatigueColor = fatigueRatio > 0.6 ? '#27ae60' : fatigueRatio > 0.3 ? '#f39c12' : '#e74c3c';
-        const fatigueWidth = Math.max(0, fatigueRatio * 100);
-        // Блокируем только если устал ИЛИ уже выполнил основную задачу
-        const isDisabled = p.fatigue >= p.maxFatigue || assignedMainParticipants.has(p.id);
-        const isSelected = selectedParticipant === p.id;
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="avatar">
-                    <img src="avatars/${p.avatar}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.emoji}';this.parentElement.style.fontSize='24px';">
-                </div>
-                <div class="card-info">
-                    <div class="card-name">${p.name}</div>
-                    <div class="card-desc">${p.desc}</div>
-                    <div class="card-stats">
-                        <span>📋 ${p.tasksDone}</span>
-                        <div class="fatigue-wrap">
-                            ⚡
-                            <div class="fatigue-bar"><div class="fatigue-fill" style="width:${fatigueWidth}%;background:${fatigueColor};"></div></div>
-                            <span class="fatigue-text">${p.fatigue}/${p.maxFatigue}</span>
-                        </div>
+                <!-- MAIN TASKS + RESET -->
+                <div class="column">
+                    <div class="column-title">📋 Основные задачи</div>
+                    <div id="mainTasksList"></div>
+                    <div class="reset-area">
+                        <button class="btn btn-reset" onclick="resetGame()">🔄 Начать заново</button>
                     </div>
                 </div>
-            </div>
-            <div class="card-actions">
-                <button class="btn btn-select ${isSelected ? 'active' : ''}" 
-                        ${isDisabled ? 'disabled' : ''}
-                        onclick="selectParticipant(${p.id})">Выбрать</button>
-                <button class="btn btn-info" onclick="showParticipantDetail(${p.id})">Подробнее</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
 
-function renderMainTasks() {
-    const container = document.getElementById('mainTasksList');
-    container.innerHTML = '';
-    mainTasks.forEach(t => {
-        const isDone = assignedMainTasks.has(t.id);
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <div class="card-header">
-                <span style="font-size:22px;">${t.emoji}</span>
-                <div class="card-info">
-                    <div class="card-name">${t.name}</div>
-                    <span class="role-badge">👤 ${t.correctRole}</span>
+                <!-- EXTRA TASKS + GRIFFIN -->
+                <div class="column">
+                    <div class="column-title">⭐ Дополнительные задачи</div>
+                    <div id="extraTasksList"></div>
+                    <div class="griffin-box">
+                        <div class="griffin-avatar" id="griffinAvatar">🦅</div>
+                        <span class="griffin-text" id="griffinMessage">Привет! Выбери участника, затем задачу.</span>
+                    </div>
+                    <div class="status-bar" id="statusBar"></div>
+                    <div class="hint">F11 — полноэкранный режим</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========== WIN MODAL ========== -->
+        <div id="winModal" class="win-overlay hidden">
+            <div class="win-modal">
+                <div style="font-size:48px;">🏆</div>
+                <div class="win-title">ПОЗДРАВЛЯЕМ!</div>
+                <div class="win-subtitle" id="winSubtitle">Идеальное прохождение!</div>
+                <div class="win-message" id="winMessage"></div>
+                <div class="win-stats" id="winStats"></div>
+                <div class="win-buttons">
+                    <button class="win-btn" style="background:#27ae60;color:white;" onclick="resetGame()">🔄 Играть снова</button>
+                    <button class="win-btn" style="background:#2c7be5;color:white;" onclick="goToMenu()">🏠 Главное меню</button>
+                </div>
+                <div class="win-griffin">
+                    <span>🦅</span>
+                    <span id="winGriffinMessage">Отличная работа, руководитель!</span>
                 </div>
             </div>
-            <div class="card-actions">
-                <button class="btn ${isDone ? 'btn-success' : 'btn-assign'}" 
-                        ${isDone ? 'disabled' : ''}
-                        onclick="assignMainTask(${t.id})">${isDone ? '✅ Выполнено' : 'Назначить'}</button>
-                <button class="btn btn-info" onclick="showMainTaskDetail(${t.id})">Подробнее</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
+        </div>
 
-function renderExtraTasks() {
-    const container = document.getElementById('extraTasksList');
-    container.innerHTML = '';
-    extraTasks.forEach(t => {
-        const isDone = assignedExtraTasks.has(t.id);
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <div class="card-header">
-                <span style="font-size:22px;">${t.emoji}</span>
-                <div class="card-info">
-                    <div class="card-name">${t.name}</div>
-                    <span class="cost-badge">⚡ +${t.fatigueCost}</span>
-                </div>
-            </div>
-            <div class="card-actions">
-                <button class="btn ${isDone ? 'btn-success' : 'btn-extra'}" 
-                        ${isDone ? 'disabled' : ''}
-                        onclick="assignExtraTask(${t.id})">${isDone ? '✅ Выполнено' : 'Назначить'}</button>
-                <button class="btn btn-info" onclick="showExtraTaskDetail(${t.id})">Подробнее</button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
+    </div>
 
-function updateProgress() {
-    const done = assignedMainTasks.size;
-    const total = mainTasks.length;
-    document.getElementById('progressDisplay').textContent = `📊 Прогресс: ${done}/${total}`;
-}
+    <script>
+        // ================================================================
+        //  DATA
+        // ================================================================
+        const PARTICIPANTS_DATA = [
+            { id: 0, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼',
+            avatar: 'anna.jpg' },
+            { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝',
+            avatar: 'denis.jpg' },
+            { id: 2, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер',
+                emoji: '👨‍💻', avatar: 'igor.jpg' },
+            { id: 3, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨',
+            avatar: 'maria.jpg' },
+            { id: 4, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱',
+                avatar: 'valeria.jpg' }
+        ];
 
-function updateStatusBar() {
-    const bar = document.getElementById('statusBar');
-    if (selectedParticipant !== null) {
-        const p = getParticipant(selectedParticipant);
-        if (p) bar.textContent = `Выбран: ${p.name} (⚡${p.fatigue}/${p.maxFatigue})`;
-    } else {
-        bar.textContent = '';
-    }
-}
+        const MAIN_TASKS_DATA = [
+            { id: 0, name: 'Встреча гостей', correctRole: 'Модератор', emoji: '🤝' },
+            { id: 1, name: 'Разработка логотипа', correctRole: 'Дизайнер', emoji: '🎨' },
+            { id: 2, name: 'Составление протокола', correctRole: 'Секретарь', emoji: '📋' },
+            { id: 3, name: 'Продвижение в соцсетях', correctRole: 'SMM-менеджер', emoji: '📱' },
+            { id: 4, name: 'Настройка проектора', correctRole: 'Технический волонтер', emoji: '📽️' }
+        ];
 
-function setGriffinMessage(msg) {
-    const el = document.getElementById('griffinMessage');
-    if (el) el.textContent = msg;
-}
+        const EXTRA_TASKS_DATA = [
+            { id: 5, name: 'Уборка зала', emoji: '🧹', fatigueCost: 1 },
+            { id: 6, name: 'Фотосъёмка', emoji: '📸', fatigueCost: 2 },
+            { id: 7, name: 'Раздача воды', emoji: '💧', fatigueCost: 1 }
+        ];
 
-// ============================================================
-//  GAME LOGIC
-// ============================================================
-function selectParticipant(id) {
-    if (gameCompleted) { setGriffinMessage('🎉 Игра уже завершена! Начни заново.'); return; }
-    const p = getParticipant(id);
-    if (!p) return;
-    if (p.fatigue >= p.maxFatigue) {
-        setGriffinMessage(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
-        return;
-    }
-    if (assignedMainParticipants.has(p.id)) {
-        setGriffinMessage(`❌ ${p.name} уже выполнил основную задачу! Но может выполнять дополнительные.`);
-        // Всё равно даём выбрать для доп. задач
-    }
-    selectedParticipant = id;
-    render();
-    setGriffinMessage(`✅ Выбран ${p.name}. Выбери задачу (основную или дополнительную).`);
-}
+        // ================================================================
+        //  STATE
+        // ================================================================
+        let participants = [];
+        let mainTasks = [];
+        let extraTasks = [];
+        let selectedId = null;
+        let assignedMain = new Set();
+        let assignedExtra = new Set();
+        let assignedMainParticipants = new Set();
+        let gameOver = false;
+        let winShown = false;
 
-function assignMainTask(taskId) {
-    if (gameCompleted) { setGriffinMessage('🎉 Игра уже завершена!'); return; }
-    if (assignedMainTasks.has(taskId)) { setGriffinMessage('❌ Задача уже выполнена!'); return; }
-    if (selectedParticipant === null) { setGriffinMessage('⚠️ Сначала выбери участника!'); return; }
-
-    const p = getParticipant(selectedParticipant);
-    const task = getMainTask(taskId);
-    if (!p || !task) return;
-
-    // Проверяем, не устал ли
-    if (p.fatigue >= p.maxFatigue) {
-        setGriffinMessage(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
-        return;
-    }
-
-    if (p.role === task.correctRole) {
-        assignedMainTasks.add(taskId);
-        assignedMainParticipants.add(p.id);
-        p.fatigue += 1;
-        p.tasksDone += 1;
-        selectedParticipant = null;
-        render();
-        setGriffinMessage(`🎉 ${p.name} → '${task.name}'! (⚡${p.fatigue}/${p.maxFatigue})`);
-        checkWinCondition();
-    } else {
-        setGriffinMessage(`❌ ${p.name} не подходит для '${task.name}'! 💡 Нужен ${task.correctRole}.`);
-        selectedParticipant = null;
-        render();
-    }
-}
-
-function assignExtraTask(taskId) {
-    if (gameCompleted) { setGriffinMessage('🎉 Игра уже завершена!'); return; }
-    if (assignedExtraTasks.has(taskId)) { setGriffinMessage('❌ Задача уже выполнена!'); return; }
-    if (selectedParticipant === null) { setGriffinMessage('⚠️ Сначала выбери участника!'); return; }
-
-    const p = getParticipant(selectedParticipant);
-    const task = getExtraTask(taskId);
-    if (!p || !task) return;
-
-    if (p.fatigue + task.fatigueCost > p.maxFatigue) {
-        setGriffinMessage(`❌ ${p.name} устал! ${p.fatigue}+${task.fatigueCost} > ${p.maxFatigue}`);
-        return;
-    }
-
-    // Назначаем дополнительную задачу — НЕ блокируем участника!
-    assignedExtraTasks.add(taskId);
-    p.fatigue += task.fatigueCost;
-    p.tasksDone += 1;
-    
-    // НЕ сбрасываем selectedParticipant, чтобы можно было назначить несколько доп. задач!
-    render();
-    setGriffinMessage(`🎉 ${p.name} → '${task.name}'! +${task.fatigueCost}⚡ (⚡${p.fatigue}/${p.maxFatigue})`);
-    document.getElementById('statusBar').textContent = `Выбран: ${p.name} (можно ещё доп. задачи)`;
-    
-    if (assignedMainTasks.size === mainTasks.length) {
-        checkWinCondition();
-    }
-}
-
-function checkWinCondition() {
-    if (assignedMainTasks.size === mainTasks.length && !winShown) {
-        gameCompleted = true;
-        winShown = true;
-        showWinScreen();
-    }
-}
-
-// ============================================================
-//  DETAILS
-// ============================================================
-function showParticipantDetail(id) {
-    const p = getParticipant(id);
-    if (!p) return;
-    alert(`${p.emoji} ${p.name}\n\n${p.desc}\n\n🎯 Роль: ${p.role}\n⚡ Усталость: ${p.fatigue}/${p.maxFatigue}\n📋 Выполнено: ${p.tasksDone}`);
-}
-
-function showMainTaskDetail(id) {
-    const t = getMainTask(id);
-    if (!t) return;
-    alert(`${t.emoji} ${t.name}\n\n👤 Требуемая роль: ${t.correctRole}`);
-}
-
-function showExtraTaskDetail(id) {
-    const t = getExtraTask(id);
-    if (!t) return;
-    alert(`${t.emoji} ${t.name}\n\n⚡ Стоимость усталости: +${t.fatigueCost}`);
-}
-
-// ============================================================
-//  WIN SCREEN
-// ============================================================
-function showWinScreen() {
-    const totalExtra = extraTasks.length;
-    const doneExtra = assignedExtraTasks.size;
-    
-    let subtitle, message, griffinMsg;
-    if (doneExtra === totalExtra) {
-        subtitle = '🌟 ИДЕАЛЬНОЕ ПРОХОЖДЕНИЕ! 🌟';
-        message = 'Вы распределили все основные И дополнительные задачи!\nМероприятие прошло на высшем уровне!';
-        griffinMsg = 'Ты — легендарный руководитель! 👏';
-    } else if (doneExtra >= totalExtra / 2) {
-        subtitle = '✨ ОТЛИЧНАЯ РАБОТА! ✨';
-        message = `Вы распределили все основные задачи!\nДополнительные задачи выполнены: ${doneExtra}/${totalExtra}`;
-        griffinMsg = 'Отличная работа, руководитель! 🎉';
-    } else {
-        subtitle = '✅ ВСЁ ПОД КОНТРОЛЕМ! ✅';
-        message = `Вы распределили все основные задачи!\nДополнительные задачи выполнены: ${doneExtra}/${totalExtra}`;
-        griffinMsg = 'Главное — основные задачи выполнены! 👍';
-    }
-
-    document.getElementById('winSubtitle').textContent = subtitle;
-    document.getElementById('winMessage').textContent = message;
-    document.getElementById('winGriffinMessage').textContent = griffinMsg;
-    document.getElementById('winStats').innerHTML = `
-        📊 Статистика:<br>
-        • Основные задачи: ✅ 5/5<br>
-        • Дополнительные задачи: ${doneExtra}/${totalExtra}<br>
-        • Использовано участников: ${assignedMainParticipants.size}/5<br>
-        • Всего выполнено задач: ${participants.reduce((sum, p) => sum + p.tasksDone, 0)}
-    `;
-    document.getElementById('winModal').classList.remove('hidden');
-}
-
-// ============================================================
-//  NAVIGATION
-// ============================================================
-function startGame() {
-    document.getElementById('startMenu').classList.add('hidden');
-    document.getElementById('gameArea').classList.remove('hidden');
-    initGame();
-}
-
-function goToMenu() {
-    document.getElementById('winModal').classList.add('hidden');
-    document.getElementById('gameArea').classList.add('hidden');
-    document.getElementById('startMenu').classList.remove('hidden');
-}
-
-function resetGame() {
-    document.getElementById('winModal').classList.add('hidden');
-    initGame();
-}
-
-function initGame() {
-    // Глубокое копирование с обнулением
-    participants = participantsData.map(p => ({ 
-        ...p, 
-        fatigue: 0, 
-        tasksDone: 0,
-        maxFatigue: p.maxFatigue || 3 
-    }));
-    mainTasks = mainTasksData.map(t => ({ ...t }));
-    extraTasks = extraTasksData.map(t => ({ ...t }));
-    
-    shuffle(participants);
-    shuffle(mainTasks);
-    shuffle(extraTasks);
-    
-    participants.forEach((p, i) => p.id = i);
-    mainTasks.forEach((t, i) => t.id = i);
-    extraTasks.forEach((t, i) => t.id = i + 5);
-    
-    selectedParticipant = null;
-    assignedMainTasks = new Set();
-    assignedExtraTasks = new Set();
-    assignedMainParticipants = new Set();
-    gameCompleted = false;
-    winShown = false;
-    
-    render();
-    setGriffinMessage('🔄 Игра сброшена! Участники и задачи перемешаны!');
-    document.getElementById('statusBar').textContent = '';
-}
-
-// ============================================================
-//  FULLSCREEN
-// ============================================================
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'F11') {
-        e.preventDefault();
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-            document.exitFullscreen().catch(() => {});
+        // ================================================================
+        //  HELPERS
+        // ================================================================
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
         }
-    }
-});
 
-// ============================================================
-//  INIT
-// ============================================================
-initGame();
-</script>
+        function getParticipant(id) { return participants.find(p => p.id === id); }
+
+        function getMainTask(id) { return mainTasks.find(t => t.id === id); }
+
+        function getExtraTask(id) { return extraTasks.find(t => t.id === id); }
+
+        // ================================================================
+        //  RENDER
+        // ================================================================
+        function render() {
+            renderParticipants();
+            renderMainTasks();
+            renderExtraTasks();
+            updateProgress();
+            updateStatusBar();
+        }
+
+        function renderParticipants() {
+            const el = document.getElementById('participantsList');
+            el.innerHTML = '';
+            for (const p of participants) {
+                const ratio = (p.maxFatigue - p.fatigue) / p.maxFatigue;
+                const color = ratio > 0.6 ? '#27ae60' : ratio > 0.3 ? '#f39c12' : '#e74c3c';
+                const width = Math.max(0, ratio * 100);
+                const disabled = p.fatigue >= p.maxFatigue || assignedMainParticipants.has(p.id);
+                const active = selectedId === p.id;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-row">
+                        <div class="avatar-box">
+                            <img src="avatars/${p.avatar}" alt="${p.name}" 
+                                 onerror="this.style.display='none';this.parentElement.textContent='${p.emoji}';this.parentElement.style.fontSize='24px';">
+                        </div>
+                        <div class="card-body">
+                            <div class="card-name">${p.name}</div>
+                            <div class="card-desc">${p.desc}</div>
+                            <div class="card-stats">
+                                <span>📋 ${p.tasksDone}</span>
+                                <div class="fatigue-wrap">
+                                    ⚡
+                                    <div class="fatigue-bar"><div class="fatigue-fill" style="width:${width}%;background:${color};"></div></div>
+                                    <span class="fatigue-label">${p.fatigue}/${p.maxFatigue}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-select ${active ? 'active' : ''}" ${disabled ? 'disabled' : ''}
+                                onclick="selectParticipant(${p.id})">Выбрать</button>
+                        <button class="btn btn-info" onclick="showDetail(${p.id})">Подробнее</button>
+                    </div>
+                `;
+                el.appendChild(card);
+            }
+        }
+
+        function renderMainTasks() {
+            const el = document.getElementById('mainTasksList');
+            el.innerHTML = '';
+            for (const t of mainTasks) {
+                const done = assignedMain.has(t.id);
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-row">
+                        <span style="font-size:22px;">${t.emoji}</span>
+                        <div class="card-body">
+                            <div class="card-name">${t.name}</div>
+                            <span class="role-badge">👤 ${t.correctRole}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn ${done ? 'btn-success' : 'btn-assign'}" ${done ? 'disabled' : ''}
+                                onclick="assignMain(${t.id})">${done ? '✅ Выполнено' : 'Назначить'}</button>
+                        <button class="btn btn-info" onclick="showMainDetail(${t.id})">Подробнее</button>
+                    </div>
+                `;
+                el.appendChild(card);
+            }
+        }
+
+        function renderExtraTasks() {
+            const el = document.getElementById('extraTasksList');
+            el.innerHTML = '';
+            for (const t of extraTasks) {
+                const done = assignedExtra.has(t.id);
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-row">
+                        <span style="font-size:22px;">${t.emoji}</span>
+                        <div class="card-body">
+                            <div class="card-name">${t.name}</div>
+                            <span class="cost-badge">⚡ +${t.fatigueCost}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn ${done ? 'btn-success' : 'btn-extra'}" ${done ? 'disabled' : ''}
+                                onclick="assignExtra(${t.id})">${done ? '✅ Выполнено' : 'Назначить'}</button>
+                        <button class="btn btn-info" onclick="showExtraDetail(${t.id})">Подробнее</button>
+                    </div>
+                `;
+                el.appendChild(card);
+            }
+        }
+
+        function updateProgress() {
+            document.getElementById('progressDisplay').textContent = `📊 ${assignedMain.size} / ${mainTasks.length}`;
+        }
+
+        function updateStatusBar() {
+            const el = document.getElementById('statusBar');
+            if (selectedId !== null) {
+                const p = getParticipant(selectedId);
+                if (p) el.textContent = `Выбран: ${p.name}  ⚡ ${p.fatigue}/${p.maxFatigue}`;
+            } else {
+                el.textContent = '';
+            }
+        }
+
+        function setGriffin(msg) {
+            document.getElementById('griffinMessage').textContent = msg;
+        }
+
+        // ================================================================
+        //  GAME LOGIC
+        // ================================================================
+        function selectParticipant(id) {
+            if (gameOver) { setGriffin('🎉 Игра завершена! Начни заново.'); return; }
+            const p = getParticipant(id);
+            if (!p) return;
+            if (p.fatigue >= p.maxFatigue) {
+                setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
+                return;
+            }
+            selectedId = id;
+            render();
+            setGriffin(`✅ Выбран ${p.name}. Выбери задачу.`);
+        }
+
+        function assignMain(taskId) {
+            if (gameOver) { setGriffin('🎉 Игра завершена!'); return; }
+            if (assignedMain.has(taskId)) { setGriffin('❌ Задача уже выполнена!'); return; }
+            if (selectedId === null) { setGriffin('⚠️ Сначала выбери участника!'); return; }
+
+            const p = getParticipant(selectedId);
+            const t = getMainTask(taskId);
+            if (!p || !t) return;
+
+            if (p.role === t.correctRole) {
+                assignedMain.add(taskId);
+                assignedMainParticipants.add(p.id);
+                p.fatigue += 1;
+                p.tasksDone += 1;
+                selectedId = null;
+                render();
+                setGriffin(`🎉 ${p.name} → «${t.name}»  ⚡ ${p.fatigue}/${p.maxFatigue}`);
+                checkWin();
+            } else {
+                setGriffin(`❌ ${p.name} не подходит для «${t.name}»! 💡 Нужен ${t.correctRole}.`);
+                selectedId = null;
+                render();
+            }
+        }
+
+        function assignExtra(taskId) {
+            if (gameOver) { setGriffin('🎉 Игра завершена!'); return; }
+            if (assignedExtra.has(taskId)) { setGriffin('❌ Задача уже выполнена!'); return; }
+            if (selectedId === null) { setGriffin('⚠️ Сначала выбери участника!'); return; }
+
+            const p = getParticipant(selectedId);
+            const t = getExtraTask(taskId);
+            if (!p || !t) return;
+
+            if (p.fatigue + t.fatigueCost > p.maxFatigue) {
+                setGriffin(`❌ ${p.name} устал! ${p.fatigue}+${t.fatigueCost} > ${p.maxFatigue}`);
+                return;
+            }
+
+            assignedExtra.add(taskId);
+            p.fatigue += t.fatigueCost;
+            p.tasksDone += 1;
+            // НЕ сбрасываем selectedId — можно назначить несколько доп. задач
+            render();
+            setGriffin(`🎉 ${p.name} → «${t.name}»  +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
+            document.getElementById('statusBar').textContent = `Выбран: ${p.name}  (можно ещё доп. задачи)`;
+
+            if (assignedMain.size === mainTasks.length) {
+                checkWin();
+            }
+        }
+
+        function checkWin() {
+            if (assignedMain.size === mainTasks.length && !winShown) {
+                gameOver = true;
+                winShown = true;
+                showWin();
+            }
+        }
+
+        // ================================================================
+        //  DETAILS
+        // ================================================================
+        function showDetail(id) {
+            const p = getParticipant(id);
+            if (!p) return;
+            alert(`${p.emoji} ${p.name}\n\n${p.desc}\n\n🎯 Роль: ${p.role}\n⚡ Усталость: ${p.fatigue}/${p.maxFatigue}\n📋 Выполнено: ${p.tasksDone}`);
+        }
+
+        function showMainDetail(id) {
+            const t = getMainTask(id);
+            if (!t) return;
+            alert(`${t.emoji} ${t.name}\n\n👤 Требуемая роль: ${t.correctRole}`);
+        }
+
+        function showExtraDetail(id) {
+            const t = getExtraTask(id);
+            if (!t) return;
+            alert(`${t.emoji} ${t.name}\n\n⚡ Стоимость усталости: +${t.fatigueCost}`);
+        }
+
+        // ================================================================
+        //  WIN SCREEN
+        // ================================================================
+        function showWin() {
+            const total = extraTasks.length;
+            const done = assignedExtra.size;
+
+            let sub, msg, griffinMsg;
+            if (done === total) {
+                sub = '🌟 ИДЕАЛЬНОЕ ПРОХОЖДЕНИЕ! 🌟';
+                msg = 'Все основные И дополнительные задачи выполнены!\nМероприятие прошло на высшем уровне!';
+                griffinMsg = 'Ты — легендарный руководитель! 👏';
+            } else if (done >= total / 2) {
+                sub = '✨ ОТЛИЧНАЯ РАБОТА! ✨';
+                msg = `Все основные задачи выполнены!\nДополнительные: ${done}/${total}`;
+                griffinMsg = 'Отличная работа, руководитель! 🎉';
+            } else {
+                sub = '✅ ВСЁ ПОД КОНТРОЛЕМ! ✅';
+                msg = `Все основные задачи выполнены!\nДополнительные: ${done}/${total}`;
+                griffinMsg = 'Главное — основные задачи выполнены! 👍';
+            }
+
+            document.getElementById('winSubtitle').textContent = sub;
+            document.getElementById('winMessage').textContent = msg;
+            document.getElementById('winGriffinMessage').textContent = griffinMsg;
+            document.getElementById('winStats').innerHTML = `
+                📊 Статистика:<br>
+                • Основные задачи: ✅ 5/5<br>
+                • Дополнительные задачи: ${done}/${total}<br>
+                • Использовано участников: ${assignedMainParticipants.size}/5<br>
+                • Всего выполнено задач: ${participants.reduce((s, p) => s + p.tasksDone, 0)}
+            `;
+            document.getElementById('winModal').classList.remove('hidden');
+        }
+
+        // ================================================================
+        //  NAVIGATION
+        // ================================================================
+        function startGame() {
+            document.getElementById('startMenu').classList.add('hidden');
+            document.getElementById('gameArea').classList.remove('hidden');
+            initGame();
+        }
+
+        function goToMenu() {
+            document.getElementById('winModal').classList.add('hidden');
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('startMenu').classList.remove('hidden');
+        }
+
+        function resetGame() {
+            document.getElementById('winModal').classList.add('hidden');
+            initGame();
+        }
+
+        function initGame() {
+            participants = PARTICIPANTS_DATA.map(p => ({
+                ...p,
+                fatigue: 0,
+                maxFatigue: 3,
+                tasksDone: 0
+            }));
+            mainTasks = MAIN_TASKS_DATA.map(t => ({ ...t }));
+            extraTasks = EXTRA_TASKS_DATA.map(t => ({ ...t }));
+
+            shuffle(participants);
+            shuffle(mainTasks);
+            shuffle(extraTasks);
+
+            participants.forEach((p, i) => p.id = i);
+            mainTasks.forEach((t, i) => t.id = i);
+            extraTasks.forEach((t, i) => t.id = i + 5);
+
+            selectedId = null;
+            assignedMain = new Set();
+            assignedExtra = new Set();
+            assignedMainParticipants = new Set();
+            gameOver = false;
+            winShown = false;
+
+            render();
+            setGriffin('🔄 Игра сброшена! Участники и задачи перемешаны.');
+            document.getElementById('statusBar').textContent = '';
+        }
+
+        // ================================================================
+        //  FULLSCREEN (F11)
+        // ================================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                } else {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+        });
+
+        // ================================================================
+        //  START
+        // ================================================================
+        initGame();
+    </script>
 
 </body>
 </html>
