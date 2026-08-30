@@ -130,11 +130,17 @@
             padding: 12px 14px;
             margin-bottom: 10px;
             border: 2px solid #e9edf2;
-            transition: 0.15s;
+            transition: 0.2s;
         }
 
         .card:hover {
             border-color: #c5d0df;
+        }
+
+        .card.selected {
+            border-color: #2c7be5;
+            box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.3);
+            background: #f0f7ff;
         }
 
         .card-row {
@@ -546,6 +552,17 @@
             border-radius: 4px;
         }
 
+        /* Полоска прогресса дополнительных задач */
+        .extra-progress {
+            font-size: 12px;
+            color: #6b7a8a;
+            text-align: center;
+            margin-top: 6px;
+            padding: 4px 8px;
+            background: #eef1f5;
+            border-radius: 8px;
+        }
+
         @media (max-width: 1024px) {
             .columns {
                 grid-template-columns: 1fr 1fr;
@@ -592,7 +609,7 @@
                 Вы — руководитель мероприятия «День открытых дверей — 2027».<br>
                 В вашей команде 5 студентов с уникальными навыками.<br>
                 Распределите 5 основных задач, учитывая специализацию.<br><br>
-                ⚡ Участники устают — следите за уровнем усталости!<br>
+                ⚡ Участники устают — следите за уровнем!<br>
                 ⭐ Дополнительные задачи необязательны, но приносят бонусы!
             </div>
             <button class="start-btn" onclick="startGame()">🚀 Начать игру</button>
@@ -634,6 +651,7 @@
                 <div class="column extra-column">
                     <div class="column-title">⭐ Дополнительные задачи</div>
                     <div class="extra-tasks-scroll" id="extraTasksList"></div>
+                    <div class="extra-progress" id="extraProgress">⭐ 0 / 3 выполнено</div>
                     <div class="griffin-box">
                         <div class="griffin-avatar" id="griffinAvatar">
                             <img src="avatars/griffin.jpg" alt="Грифон" 
@@ -658,7 +676,7 @@
                 <div class="win-stats" id="winStats"></div>
                 <div class="win-buttons">
                     <button class="win-btn" style="background:#27ae60;color:white;" onclick="resetGame()">🔄 Играть снова</button>
-                    <button class="win-btn" style="background:#2c7be5;color:white;" onclick="goToMenu()">🏠 Стартовое меню</button>
+                    <button class="win-btn" style="background:#2c7be5;color:white;" onclick="goToMenu()">🏠 Главное меню</button>
                 </div>
                 <div class="win-griffin">
                     <span>🦅</span>
@@ -675,15 +693,15 @@
         // ================================================================
         const PARTICIPANTS_DATA = [
             { id: 0, name: 'Мария', desc: 'Творческая, генерирует идеи', role: 'Дизайнер', emoji: '🎨',
-            avatar: 'maria.jpg' },
+                avatar: 'maria.jpg', gender: 'female' },
             { id: 1, name: 'Денис', desc: 'Ответственный, хорошо пишет тексты', role: 'Секретарь', emoji: '📝',
-            avatar: 'denis.jpg' },
+                avatar: 'denis.jpg', gender: 'male' },
             { id: 2, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼',
-            avatar: 'anna.jpg' },
-            { id: 3, name: 'Валерия', desc: 'Любит снимать липсинги', role: 'SMM-менеджер', emoji: '📱',
-            avatar: 'valeria.jpg' },
+                avatar: 'anna.jpg', gender: 'female' },
+            { id: 3, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱',
+                avatar: 'valeria.jpg', gender: 'female' },
             { id: 4, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер',
-                emoji: '👨‍💻', avatar: 'igor.jpg' }
+                emoji: '👨‍💻', avatar: 'igor.jpg', gender: 'male' }
         ];
 
         const MAIN_TASKS_DATA = [
@@ -709,7 +727,7 @@
         let selectedId = null;
         let assignedMain = new Set();
         let assignedExtra = new Set();
-        let assignedMainParticipants = new Set(); // Кто выполнил ОСНОВНУЮ задачу
+        let assignedMainParticipants = new Set();
         let gameOver = false;
         let winShown = false;
 
@@ -730,6 +748,18 @@
 
         function getExtraTask(id) { return extraTasks.find(t => t.id === id); }
 
+        // Склонение "выбран/выбрана" в зависимости от пола
+        function getGenderWord(name, gender) {
+            if (gender === 'female') return `Выбрана ${name}`;
+            return `Выбран ${name}`;
+        }
+
+        // Склонение для подсказок
+        function getGenderPronoun(gender) {
+            if (gender === 'female') return 'она';
+            return 'он';
+        }
+
         // ================================================================
         //  RENDER
         // ================================================================
@@ -739,32 +769,35 @@
             renderExtraTasks();
             updateProgress();
             updateStatusBar();
+            updateExtraProgress();
         }
 
         function renderParticipants() {
             const el = document.getElementById('participantsList');
             el.innerHTML = '';
+
+            // Проверяем, все ли доп. задачи выполнены
+            const allExtraDone = assignedExtra.size === extraTasks.length;
+
             for (const p of participants) {
                 const ratio = (p.maxFatigue - p.fatigue) / p.maxFatigue;
                 const color = ratio > 0.6 ? '#27ae60' : ratio > 0.3 ? '#f39c12' : '#e74c3c';
                 const width = Math.max(0, ratio * 100);
-                
-                // Полностью недоступен только если устал
+
                 const isExhausted = p.fatigue >= p.maxFatigue;
-                // Выполнил основную задачу — блокируем для основных, но НЕ для дополнительных
                 const hasMainDone = assignedMainParticipants.has(p.id);
-                // Выбран ли сейчас
-                const active = selectedId === p.id;
-                
-                // Кнопка "Выбрать" — доступна только если НЕ устал
-                const canSelect = !isExhausted;
+                const isSelected = selectedId === p.id;
+
+                // Если все доп. задачи выполнены — блокируем выбор для доп. задач
+                const allExtraBlocked = allExtraDone && hasMainDone;
+                const canSelect = !isExhausted && !allExtraBlocked;
 
                 const card = document.createElement('div');
-                card.className = 'card';
-                
-                // Статусная метка
+                card.className = 'card' + (isSelected ? ' selected' : '');
+
                 let statusBadge = '';
                 if (isExhausted) statusBadge = '😴 Устал';
+                else if (hasMainDone && allExtraDone) statusBadge = '✅ Все задачи выполнены';
                 else if (hasMainDone) statusBadge = '✅ Осн. задача выполнена';
 
                 card.innerHTML = `
@@ -787,10 +820,10 @@
                         </div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn btn-select ${active ? 'active' : ''} ${hasMainDone ? 'done-main' : ''}" 
+                        <button class="btn btn-select ${isSelected ? 'active' : ''} ${hasMainDone ? 'done-main' : ''}" 
                                 ${!canSelect ? 'disabled' : ''}
                                 onclick="selectParticipant(${p.id})">
-                            ${hasMainDone ? '📌 Выбрать (доп)' : 'Выбрать'}
+                            ${hasMainDone ? (allExtraDone ? '✅ Готово' : '📌 Выбрать (доп)') : 'Выбрать'}
                         </button>
                         <button class="btn btn-info" onclick="showDetail(${p.id})">Подробнее</button>
                     </div>
@@ -853,11 +886,18 @@
             document.getElementById('progressDisplay').textContent = `📊 ${assignedMain.size} / ${mainTasks.length}`;
         }
 
+        function updateExtraProgress() {
+            document.getElementById('extraProgress').textContent = `⭐ ${assignedExtra.size} / ${extraTasks.length} выполнено`;
+        }
+
         function updateStatusBar() {
             const el = document.getElementById('statusBar');
             if (selectedId !== null) {
                 const p = getParticipant(selectedId);
-                if (p) el.textContent = `Выбран: ${p.name}  ⚡ ${p.fatigue}/${p.maxFatigue}`;
+                if (p) {
+                    const genderWord = getGenderWord(p.name, p.gender);
+                    el.textContent = `${genderWord}  ⚡ ${p.fatigue}/${p.maxFatigue}`;
+                }
             } else {
                 el.textContent = '';
             }
@@ -872,19 +912,29 @@
         // ================================================================
         function selectParticipant(id) {
             if (gameOver) { setGriffin('🎉 Игра завершена! Начни заново.'); return; }
+
             const p = getParticipant(id);
             if (!p) return;
+
             if (p.fatigue >= p.maxFatigue) {
-                setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
+                setGriffin(`❌ ${p.name} слишком устал${p.gender === 'female' ? 'а' : ''}! (${p.fatigue}/${p.maxFatigue})`);
                 return;
             }
+
+            const allExtraDone = assignedExtra.size === extraTasks.length;
+            if (assignedMainParticipants.has(p.id) && allExtraDone) {
+                setGriffin(`✅ ${p.name} уже выполнил${p.gender === 'female' ? 'а' : ''} все задачи!`);
+                return;
+            }
+
             selectedId = id;
             render();
             const hasMain = assignedMainParticipants.has(p.id);
+            const genderWord = getGenderWord(p.name, p.gender);
             if (hasMain) {
-                setGriffin(`✅ Выбран ${p.name} (основная выполнена). Может выполнять доп. задачи.`);
+                setGriffin(`✅ ${genderWord} (основная выполнена). Может выполнять доп. задачи.`);
             } else {
-                setGriffin(`✅ Выбран ${p.name}. Выбери задачу.`);
+                setGriffin(`✅ ${genderWord}. Выбери задачу.`);
             }
         }
 
@@ -897,17 +947,15 @@
             const t = getMainTask(taskId);
             if (!p || !t) return;
 
-            // Проверяем, не устал ли
             if (p.fatigue >= p.maxFatigue) {
-                setGriffin(`❌ ${p.name} слишком устал! (${p.fatigue}/${p.maxFatigue})`);
+                setGriffin(`❌ ${p.name} слишком устал${p.gender === 'female' ? 'а' : ''}! (${p.fatigue}/${p.maxFatigue})`);
                 selectedId = null;
                 render();
                 return;
             }
 
-            // Проверяем, не выполнил ли уже основную задачу
             if (assignedMainParticipants.has(p.id)) {
-                setGriffin(`❌ ${p.name} уже выполнил основную задачу! Может только доп. задачи.`);
+                setGriffin(`❌ ${p.name} уже выполнил${p.gender === 'female' ? 'а' : ''} основную задачу! Может только доп. задачи.`);
                 selectedId = null;
                 render();
                 return;
@@ -918,9 +966,10 @@
                 assignedMainParticipants.add(p.id);
                 p.fatigue += 1;
                 p.tasksDone += 1;
-                selectedId = null; // Сбрасываем после основной задачи
+                selectedId = null;
                 render();
-                setGriffin(`🎉 ${p.name} → «${t.name}»  ⚡ ${p.fatigue}/${p.maxFatigue}`);
+                const genderPronoun = getGenderPronoun(p.gender);
+                setGriffin(`🎉 ${p.name} → «${t.name}»! Теперь ${genderPronoun} может выполнять доп. задачи. ⚡ ${p.fatigue}/${p.maxFatigue}`);
                 checkWin();
             } else {
                 setGriffin(`❌ ${p.name} не подходит для «${t.name}»! 💡 Нужен ${t.correctRole}.`);
@@ -938,20 +987,27 @@
             const t = getExtraTask(taskId);
             if (!p || !t) return;
 
-            // Проверяем усталость
             if (p.fatigue + t.fatigueCost > p.maxFatigue) {
-                setGriffin(`❌ ${p.name} устал! ${p.fatigue}+${t.fatigueCost} > ${p.maxFatigue}`);
+                setGriffin(`❌ ${p.name} устал${p.gender === 'female' ? 'а' : ''}! ${p.fatigue}+${t.fatigueCost} > ${p.maxFatigue}`);
                 return;
             }
 
             assignedExtra.add(taskId);
             p.fatigue += t.fatigueCost;
             p.tasksDone += 1;
-            
-            // НЕ СБРАСЫВАЕМ selectedId — можно назначать несколько доп. задач!
+
             render();
-            setGriffin(`🎉 ${p.name} → «${t.name}»  +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
-            document.getElementById('statusBar').textContent = `Выбран: ${p.name}  (можно ещё доп. задачи)`;
+            const genderPronoun = getGenderPronoun(p.gender);
+            setGriffin(`🎉 ${p.name} → «${t.name}»! +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
+            document.getElementById('statusBar').textContent = `${getGenderWord(p.name, p.gender)} (можно ещё доп. задачи)`;
+
+            // Проверяем, все ли доп. задачи выполнены
+            if (assignedExtra.size === extraTasks.length) {
+                setGriffin(`🎉 Все дополнительные задачи выполнены! ${p.name} молодец!`);
+                // Сбрасываем выбор, так как больше доп. задач нет
+                selectedId = null;
+                render();
+            }
 
             if (assignedMain.size === mainTasks.length) {
                 checkWin();
