@@ -552,7 +552,6 @@
             border-radius: 4px;
         }
 
-        /* Полоска прогресса дополнительных задач */
         .extra-progress {
             font-size: 12px;
             color: #6b7a8a;
@@ -748,16 +747,25 @@
 
         function getExtraTask(id) { return extraTasks.find(t => t.id === id); }
 
-        // Склонение "выбран/выбрана" в зависимости от пола
-        function getGenderWord(name, gender) {
-            if (gender === 'female') return `Выбрана ${name}`;
-            return `Выбран ${name}`;
+        // Склонение "выбран/выбрана"
+        function getGenderWord(name, gender, action = 'selected') {
+            if (action === 'selected') {
+                return gender === 'female' ? `Выбрана ${name}` : `Выбран ${name}`;
+            }
+            if (action === 'tired') {
+                return gender === 'female' ? 'Устала' : 'Устал';
+            }
+            if (action === 'tired_full') {
+                return gender === 'female' ? `${name} устала!` : `${name} устал!`;
+            }
+            if (action === 'done') {
+                return gender === 'female' ? 'Выполнила' : 'Выполнил';
+            }
+            return name;
         }
 
-        // Склонение для подсказок
         function getGenderPronoun(gender) {
-            if (gender === 'female') return 'она';
-            return 'он';
+            return gender === 'female' ? 'она' : 'он';
         }
 
         // ================================================================
@@ -776,7 +784,6 @@
             const el = document.getElementById('participantsList');
             el.innerHTML = '';
 
-            // Проверяем, все ли доп. задачи выполнены
             const allExtraDone = assignedExtra.size === extraTasks.length;
 
             for (const p of participants) {
@@ -788,7 +795,6 @@
                 const hasMainDone = assignedMainParticipants.has(p.id);
                 const isSelected = selectedId === p.id;
 
-                // Если все доп. задачи выполнены — блокируем выбор для доп. задач
                 const allExtraBlocked = allExtraDone && hasMainDone;
                 const canSelect = !isExhausted && !allExtraBlocked;
 
@@ -796,9 +802,15 @@
                 card.className = 'card' + (isSelected ? ' selected' : '');
 
                 let statusBadge = '';
-                if (isExhausted) statusBadge = '😴 Устал';
-                else if (hasMainDone && allExtraDone) statusBadge = '✅ Все задачи выполнены';
-                else if (hasMainDone) statusBadge = '✅ Осн. задача выполнена';
+                if (isExhausted) {
+                    // Проверка на пол для "Устал/Устала"
+                    const tiredWord = getGenderWord(p.name, p.gender, 'tired');
+                    statusBadge = `😴 ${tiredWord}`;
+                } else if (hasMainDone && allExtraDone) {
+                    statusBadge = '✅ Все задачи выполнены';
+                } else if (hasMainDone) {
+                    statusBadge = '✅ Осн. задача выполнена';
+                }
 
                 card.innerHTML = `
                     <div class="card-row">
@@ -895,7 +907,7 @@
             if (selectedId !== null) {
                 const p = getParticipant(selectedId);
                 if (p) {
-                    const genderWord = getGenderWord(p.name, p.gender);
+                    const genderWord = getGenderWord(p.name, p.gender, 'selected');
                     el.textContent = `${genderWord}  ⚡ ${p.fatigue}/${p.maxFatigue}`;
                 }
             } else {
@@ -917,20 +929,22 @@
             if (!p) return;
 
             if (p.fatigue >= p.maxFatigue) {
-                setGriffin(`❌ ${p.name} слишком устал${p.gender === 'female' ? 'а' : ''}! (${p.fatigue}/${p.maxFatigue})`);
+                const tiredFull = getGenderWord(p.name, p.gender, 'tired_full');
+                setGriffin(`❌ ${tiredFull} (${p.fatigue}/${p.maxFatigue})`);
                 return;
             }
 
             const allExtraDone = assignedExtra.size === extraTasks.length;
             if (assignedMainParticipants.has(p.id) && allExtraDone) {
-                setGriffin(`✅ ${p.name} уже выполнил${p.gender === 'female' ? 'а' : ''} все задачи!`);
+                const doneWord = getGenderWord(p.name, p.gender, 'done');
+                setGriffin(`✅ ${p.name} уже ${doneWord === 'Выполнила' ? 'выполнила' : 'выполнил'} все задачи!`);
                 return;
             }
 
             selectedId = id;
             render();
             const hasMain = assignedMainParticipants.has(p.id);
-            const genderWord = getGenderWord(p.name, p.gender);
+            const genderWord = getGenderWord(p.name, p.gender, 'selected');
             if (hasMain) {
                 setGriffin(`✅ ${genderWord} (основная выполнена). Может выполнять доп. задачи.`);
             } else {
@@ -948,14 +962,16 @@
             if (!p || !t) return;
 
             if (p.fatigue >= p.maxFatigue) {
-                setGriffin(`❌ ${p.name} слишком устал${p.gender === 'female' ? 'а' : ''}! (${p.fatigue}/${p.maxFatigue})`);
+                const tiredFull = getGenderWord(p.name, p.gender, 'tired_full');
+                setGriffin(`❌ ${tiredFull} (${p.fatigue}/${p.maxFatigue})`);
                 selectedId = null;
                 render();
                 return;
             }
 
             if (assignedMainParticipants.has(p.id)) {
-                setGriffin(`❌ ${p.name} уже выполнил${p.gender === 'female' ? 'а' : ''} основную задачу! Может только доп. задачи.`);
+                const doneWord = getGenderWord(p.name, p.gender, 'done');
+                setGriffin(`❌ ${p.name} уже ${doneWord === 'Выполнила' ? 'выполнила' : 'выполнил'} основную задачу! Может только доп. задачи.`);
                 selectedId = null;
                 render();
                 return;
@@ -988,7 +1004,8 @@
             if (!p || !t) return;
 
             if (p.fatigue + t.fatigueCost > p.maxFatigue) {
-                setGriffin(`❌ ${p.name} устал${p.gender === 'female' ? 'а' : ''}! ${p.fatigue}+${t.fatigueCost} > ${p.maxFatigue}`);
+                const tiredFull = getGenderWord(p.name, p.gender, 'tired_full');
+                setGriffin(`❌ ${tiredFull} ${p.fatigue}+${t.fatigueCost} > ${p.maxFatigue}`);
                 return;
             }
 
@@ -999,12 +1016,10 @@
             render();
             const genderPronoun = getGenderPronoun(p.gender);
             setGriffin(`🎉 ${p.name} → «${t.name}»! +${t.fatigueCost}⚡  (${p.fatigue}/${p.maxFatigue})`);
-            document.getElementById('statusBar').textContent = `${getGenderWord(p.name, p.gender)} (можно ещё доп. задачи)`;
+            document.getElementById('statusBar').textContent = `${getGenderWord(p.name, p.gender, 'selected')} (можно ещё доп. задачи)`;
 
-            // Проверяем, все ли доп. задачи выполнены
             if (assignedExtra.size === extraTasks.length) {
                 setGriffin(`🎉 Все дополнительные задачи выполнены! ${p.name} молодец!`);
-                // Сбрасываем выбор, так как больше доп. задач нет
                 selectedId = null;
                 render();
             }
