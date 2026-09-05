@@ -408,7 +408,7 @@
         }
 
         .start-logos .logo-oso img {
-            height: 70px;
+            height: 110px;  /* Увеличил с 70px до 110px */
         }
 
         .start-title {
@@ -558,7 +558,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px solid #e9edf2;
@@ -568,6 +568,10 @@
             height: 50px;
             width: auto;
             object-fit: contain;
+        }
+
+        .win-logos .logo-oso-win img {
+            height: 70px;  /* Увеличил на экране победы */
         }
 
         .hidden {
@@ -639,8 +643,16 @@
                 height: 50px !important;
             }
 
+            .start-logos .logo-oso img {
+                height: 70px !important;  /* На мобилках тоже увеличил */
+            }
+
             .win-logos img {
                 height: 35px !important;
+            }
+
+            .win-logos .logo-oso-win img {
+                height: 50px !important;
             }
 
             .start-logos {
@@ -656,10 +668,14 @@
         <!-- ========== START MENU ========== -->
         <div id="startMenu" class="start-menu">
             <div class="start-logos">
-                <img src="круг белый.png" alt="РГГУ" class="logo-rggu" 
-                     onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:40px;\'>🏛️</span>'">
-                <img src="pnglogo.png" alt="ОСО" class="logo-oso" 
-                     onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:32px;\'>🎓</span>'">
+                <div class="logo-rggu">
+                    <img src="круг белый.png" alt="РГГУ" 
+                         onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:40px;\'>🏛️</span>'">
+                </div>
+                <div class="logo-oso">
+                    <img src="pnglogo.png" alt="ОСО" 
+                         onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:40px;\'>🎓</span>'">
+                </div>
             </div>
             <div style="font-size:56px;">🎓</div>
             <div class="start-title">Распределение задач</div>
@@ -744,7 +760,7 @@
                 <div class="win-logos">
                     <img src="круг белый.png" alt="РГГУ" 
                          onerror="this.style.display='none'">
-                    <img src="pnglogo.png" alt="ОСО" 
+                    <img src="pnglogo.png" alt="ОСО" class="logo-oso-win"
                          onerror="this.style.display='none'">
                 </div>
             </div>
@@ -763,7 +779,7 @@
                 avatar: 'denis.jpg', gender: 'male' },
             { id: 2, name: 'Анна', desc: 'Организатор, отлично ладит с людьми', role: 'Модератор', emoji: '👩‍💼',
                 avatar: 'anna.jpg', gender: 'female' },
-            { id: 3, name: 'Валерия', desc: 'Планировать и осуществлять', role: 'SMM-менеджер', emoji: '📱',
+            { id: 3, name: 'Валерия', desc: 'Социальная, великолепно разбирается в трендах', role: 'SMM-менеджер', emoji: '📱',
                 avatar: 'valeria.jpg', gender: 'female' },
             { id: 4, name: 'Игорь', desc: 'Технарь, любит работать с презентациями', role: 'Технический волонтер',
                 emoji: '👨‍💻', avatar: 'igor.jpg', gender: 'male' }
